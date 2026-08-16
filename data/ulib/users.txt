@@ -1,0 +1,54 @@
+"STEAM_0:1:193545951"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"ГОЙДАрыч"
+	"group"	"operator"
+}
+"STEAM_0:1:239430976"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"KiriЕШka"
+	"group"	"operator"
+}
+"STEAM_0:0:117668937"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"[RUN]𝒜𝓃𝑔𝑒𝓁"
+	"group"	"superadmin"
+}
+"STEAM_0:0:623681121"	
+{
+	"deny"	
+	{
+	}
+	"allow"	
+	{
+	}
+	"name"	"КОТ C21H23NO5"
+	"group"	"superadmin"
+}
+"STEAM_1:0:623681121"	
+{
+	"allow"	
+	{
+	}
+	"deny"	
+	{
+	}
+	"group"	"superadmin"
+}

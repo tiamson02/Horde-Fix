@@ -1,0 +1,60 @@
+<Logging continued from "data/ulx_logs/08-01-24.txt">
+[00:00:10] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 47 seconds).
+[00:24:37] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>
+[00:34:50] Server is shutting down/changing levels.
+
+
+
+[18:42:56] New map: hr_moil_v1
+[18:43:09] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[18:44:10] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 61 seconds).
+[18:44:41] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[18:45:44] Client "ГОЙДАрыч" connected.
+[18:46:11] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 27 seconds).
+[18:46:31] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[18:48:30] Server is shutting down/changing levels.
+
+
+
+[18:49:08] New map: hr_moil_v1
+[18:49:19] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[18:49:52] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 33 seconds).
+[18:50:01] Client "КОТ C21H23NO5" connected.
+[18:50:07] Client "ГОЙДАрыч" connected.
+[18:50:26] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 19 seconds).
+[18:51:04] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 63 seconds).
+[18:51:44] ГОЙДАрыч: !rtv
+[18:51:50] [RUN]𝒜𝓃𝑔𝑒𝓁: !rtv
+[18:51:54] КОТ C21H23NO5: !rtv
+[18:52:35] Server is shutting down/changing levels.
+
+
+
+[18:52:50] New map: hr_moil_v1
+[18:53:12] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 32 seconds).
+[18:53:12] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 32 seconds).
+[18:53:25] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 45 seconds).
+[19:00:54] Server is shutting down/changing levels.
+
+
+
+[19:01:29] New map: hr_moil_v1
+[19:01:33] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[19:01:38] Client "ГОЙДАрыч" connected.
+[19:01:53] Client "КОТ C21H23NO5" connected.
+[19:01:54] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 16 seconds).
+[19:02:03] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 30 seconds).
+[19:02:09] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 16 seconds).
+[19:07:16] Client "komarlesang" connected.
+[19:09:23] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[19:18:35] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_crawler
+[19:20:02] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+[19:20:46] Server is shutting down/changing levels.
+
+
+
+[19:21:23] New map: hr_moil_v1
+[19:21:46] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[19:23:32] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[19:27:35] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 243 seconds).
+[20:01:17] Server is shutting down/changing levels.

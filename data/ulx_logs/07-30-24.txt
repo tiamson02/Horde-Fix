@@ -1,0 +1,37 @@
+[19:42:29] New map: hr_deadhouse_v1_fixed
+[19:42:34] Client "ГОЙДАрыч" connected.
+[19:42:51] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 17 seconds).
+[19:42:52] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 34 seconds).
+[19:42:58] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 34 seconds).
+[19:44:47] КОТ C21H23NO5: !menu
+[19:45:06] КОТ C21H23NO5 добавил [RUN]𝒜𝓃𝑔𝑒𝓁 в группу superadmin
+[19:45:09] КОТ C21H23NO5 добавил ГОЙДАрыч в группу superadmin
+[19:45:10] КОТ C21H23NO5 добавил KiriЕШka в группу superadmin
+[19:45:17] КОТ C21H23NO5 посадил в клетку [RUN]𝒜𝓃𝑔𝑒𝓁 на 6 секунд(ы)
+[19:57:12] KiriЕШka was killed by npc_hordeext_gorefast
+[19:57:58] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_siren
+[20:07:29] Dropped "KiriЕШka" from server<STEAM_0:1:239430976>
+[20:12:11] КОТ C21H23NO5: !menu
+[20:12:32] КОТ C21H23NO5 respawned Themself
+[20:21:16] КОТ C21H23NO5: !drop
+[20:36:48] КОТ C21H23NO5: !drop
+[20:37:25] Client "KiriЕШka" connected.
+[20:37:50] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 25 seconds).
+[20:44:17] [RUN]𝒜𝓃𝑔𝑒𝓁 suicided!
+[20:44:33] KiriЕШka was killed by npc_hordeext_scrake
+[20:44:46] КОТ C21H23NO5 suicided!
+[21:02:08] ГОЙДАрыч was killed by npc_hordeext_scrake
+[21:03:10] Server is shutting down/changing levels.
+
+
+
+[21:03:30] New map: hr_port_v2
+[21:03:45] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 33 seconds).
+[21:03:50] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 38 seconds).
+[21:03:54] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 42 seconds).
+[21:05:07] Dropped "ГОЙДАрыч" from server<STEAM_0:1:193545951>
+[21:05:08] Client "ГОЙДАрыч" connected.
+[21:05:21] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 13 seconds).
+[21:08:26] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>
+[21:08:27] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[21:08:28] Server is shutting down/changing levels.

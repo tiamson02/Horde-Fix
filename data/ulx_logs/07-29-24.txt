@@ -1,0 +1,3 @@
+[16:06:01] New map: hr_chaste_v1
+[16:06:47] Client "ГОЙДАрыч" connected.
+[16:07:05] Server is shutting down/changing levels.

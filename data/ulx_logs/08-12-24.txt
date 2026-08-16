@@ -1,0 +1,2 @@
+[14:02:14] New map: hr_moil_v1
+[14:33:22] Server is shutting down/changing levels.

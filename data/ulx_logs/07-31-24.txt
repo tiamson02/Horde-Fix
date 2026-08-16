@@ -1,0 +1,336 @@
+[18:50:45] New map: hr_deadblock_v1
+[18:51:07] Client "KiriЕШka" connected.
+[18:51:59] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 52 seconds).
+[18:52:02] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 78 seconds).
+[18:53:40] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>
+[18:53:41] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[18:54:11] Client "ГОЙДАрыч" connected.
+[18:54:17] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 36 seconds).
+[18:54:28] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>
+[18:54:42] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 31 seconds).
+[18:54:48] Server is shutting down/changing levels.
+
+
+
+[19:04:20] New map: hr_deadblock_v1
+[19:04:27] Client "KiriЕШka" connected.
+[19:04:37] Client "ГОЙДАрыч" connected.
+[19:04:37] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[19:04:48] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 21 seconds).
+[19:04:58] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 21 seconds).
+[19:05:31] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 54 seconds).
+[19:05:48] Server is shutting down/changing levels.
+
+
+
+[19:06:40] New map: hr_deadblock_v1
+[19:06:49] Client "ГОЙДАрыч" connected.
+[19:06:59] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 32 seconds).
+[19:07:02] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 13 seconds).
+[19:07:15] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[19:07:46] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 31 seconds).
+[19:21:31] КОТ C21H23NO5 suicided!
+[19:22:36] КОТ C21H23NO5 suicided!
+[19:23:13] КОТ C21H23NO5: !menu
+[19:25:01] КОТ C21H23NO5: !rtv
+[19:25:08] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_stalker
+[19:26:00] КОТ C21H23NO5: !menu
+[19:29:20] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[19:29:27] КОТ C21H23NO5: !menu
+[19:36:36] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_horde_sprinter
+[19:39:47] КОТ C21H23NO5 suicided!
+[20:12:35] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[20:16:06] КОТ C21H23NO5: !drop
+[20:16:53] КОТ C21H23NO5: !drop
+[20:21:35] ГОЙДАрыч was killed by obj_vj_horde_bullet
+[20:22:27] KiriЕШka was killed by npc_vj_horde_plague_elite
+[20:27:49] ГОЙДАрыч was killed by npc_vj_horde_platoon_berserker
+[20:28:57] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_horde_platoon_heavy
+[20:42:12] КОТ C21H23NO5 suicided!
+[20:42:25] КОТ C21H23NO5: !menu
+[20:42:30] КОТ C21H23NO5 enabled buddha mode on KiriЕШka
+[20:42:33] КОТ C21H23NO5 enabled buddha mode on KiriЕШka
+[20:42:42] КОТ C21H23NO5 disabled buddha mode on KiriЕШka
+[20:42:51] КОТ C21H23NO5 посадил в клетку KiriЕШka
+[20:42:52] КОТ C21H23NO5 вытащил из клетки KiriЕШka
+[20:42:54] КОТ C21H23NO5 ударил KiriЕШka на 0 урон(а)
+[20:42:55] КОТ C21H23NO5 ударил KiriЕШka на 0 урон(а)
+[20:42:55] KiriЕШka was killed by npc_hordeext_husk
+[20:42:55] КОТ C21H23NO5 ударил KiriЕШka на 0 урон(а)
+[20:42:55] КОТ C21H23NO5 ударил KiriЕШka на 0 урон(а)
+[20:43:43] Server is shutting down/changing levels.
+
+
+
+[20:44:01] New map: hr_boxfort_v1
+[20:44:13] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 29 seconds).
+[20:44:19] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 35 seconds).
+[20:44:30] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 46 seconds).
+[20:44:38] Server is shutting down/changing levels.
+
+
+
+[20:58:12] New map: hr_antarctic_hospital_v1
+[20:58:59] Client "КОТ C21H23NO5" connected.
+[20:59:00] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[20:59:03] Client "KiriЕШka" connected.
+[20:59:21] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 22 seconds).
+[20:59:24] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 21 seconds).
+[20:59:29] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 29 seconds).
+[20:59:32] Client "KOK" connected.
+[20:59:56] Client "ГОЙДАрыч" connected.
+[20:59:59] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+[21:00:15] Client "KOK" spawned in server <STEAM_0:1:150555996> (took 43 seconds).
+[21:00:16] KiriЕШka suicided!
+[21:01:01] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>
+[21:02:31] KOK: чё за приколы
+[21:02:35] KOK: хде гейминг
+
+
+
+[21:06:29] New map: hr_antarctic_hospital_v1
+[21:07:07] Client "КОТ C21H23NO5" connected.
+[21:07:23] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 16 seconds).
+[21:07:30] Client "KOK" connected.
+[21:07:51] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[21:19:43] New map: hr_antarctic_hospital_v1
+[21:20:03] Client "КОТ C21H23NO5" connected.
+[21:20:20] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 17 seconds).
+[21:20:22] Client "KOK" connected.
+[21:20:25] Client "KiriЕШka" connected.
+[21:20:41] Client "KOK" spawned in server <STEAM_0:1:150555996> (took 19 seconds).
+[21:20:44] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 19 seconds).
+[21:20:50] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[21:21:05] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+[21:21:20] Dropped "KiriЕШka" from server<STEAM_0:1:239430976>
+[21:21:24] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 34 seconds).
+
+
+
+[22:02:31] New map: hr_antarctic_hospital_v1
+
+
+
+[22:11:23] New map: hr_antarctic_hospital_v1
+[22:11:49] Client "КОТ C21H23NO5" connected.
+[22:12:06] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 17 seconds).
+[22:12:34] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[22:14:06] New map: hr_antarctic_hospital_v1
+[22:14:16] Client "КОТ C21H23NO5" connected.
+[22:14:22] Client "KOK" connected.
+[22:14:32] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 16 seconds).
+[22:14:41] Client "KOK" spawned in server <STEAM_0:1:150555996> (took 19 seconds).
+[22:14:58] Dropped "KOK" from server<STEAM_0:1:150555996>
+[22:15:19] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[22:21:39] New map: hr_antarctic_hospital_v1
+[22:21:50] Client "КОТ C21H23NO5" connected.
+[22:23:18] Client "КОТ C21H23NO5" connected.
+[22:23:38] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 20 seconds).
+[22:23:51] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[22:25:01] New map: hr_antarctic_hospital_v1
+[22:25:44] Client "КОТ C21H23NO5" connected.
+[22:26:06] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 22 seconds).
+
+
+
+[22:27:48] New map: hr_antarctic_hospital_v1
+[22:28:03] Client "КОТ C21H23NO5" connected.
+[22:28:19] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 16 seconds).
+
+
+
+[22:31:01] New map: hr_antarctic_hospital_v1
+[22:31:11] Client "КОТ C21H23NO5" connected.
+[22:31:33] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 22 seconds).
+[22:31:46] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[22:33:36] New map: hr_antarctic_hospital_v1
+[22:33:53] Client "КОТ C21H23NO5" connected.
+[22:34:15] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 22 seconds).
+[22:35:00] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[22:43:02] New map: hr_antarctic_hospital_v1
+[22:43:18] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[22:43:20] Client "КОТ C21H23NO5" connected.
+[22:44:06] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 48 seconds).
+[22:44:27] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 67 seconds).
+[22:47:18] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[22:51:17] New map: hr_antarctic_hospital_v1
+[22:51:25] Client "КОТ C21H23NO5" connected.
+[22:51:34] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[22:52:04] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 39 seconds).
+[22:52:07] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 33 seconds).
+
+
+
+[22:56:48] New map: hr_antarctic_hospital_v1
+[22:56:56] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[22:57:02] Client "КОТ C21H23NO5" connected.
+[22:57:37] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 35 seconds).
+[22:57:51] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+[22:57:54] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 58 seconds).
+
+
+
+[22:59:04] New map: hr_antarctic_hospital_v1
+[22:59:13] Client "КОТ C21H23NO5" connected.
+[22:59:30] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 17 seconds).
+[22:59:57] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[23:03:58] New map: hr_antarctic_hospital_v1
+[23:04:48] Client "КОТ C21H23NO5" connected.
+[23:05:05] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 17 seconds).
+[23:05:22] Client "KiriЕШka" connected.
+[23:05:49] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+
+
+
+[23:07:16] New map: hr_antarctic_hospital_v1
+
+
+
+[23:08:27] New map: hr_antarctic_hospital_v1
+[23:08:27] Client "KiriЕШka" connected.
+[23:08:33] Client "КОТ C21H23NO5" connected.
+[23:08:33] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[23:08:38] Client "ГОЙДАрыч" connected.
+[23:08:56] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 23 seconds).
+[23:09:08] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 35 seconds).
+[23:09:19] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 52 seconds).
+[23:09:25] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 47 seconds).
+[23:09:35] KiriЕШka: !rtv
+[23:09:36] КОТ C21H23NO5: !rtv
+[23:09:41] ГОЙДАрыч: !RTV
+[23:09:45] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[23:09:48] KiriЕШka: !menu
+[23:09:52] [RUN]𝒜𝓃𝑔𝑒𝓁 created 32 bots
+[23:09:52] Client "Bot01" connected.
+[23:09:52] Client "Bot01" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot02" connected.
+[23:09:52] Client "Bot02" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot03" connected.
+[23:09:52] Client "Bot03" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot04" connected.
+[23:09:52] Client "Bot04" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot05" connected.
+[23:09:52] Client "Bot05" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot06" connected.
+[23:09:52] Client "Bot06" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot07" connected.
+[23:09:52] Client "Bot07" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot08" connected.
+[23:09:52] Client "Bot08" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot09" connected.
+[23:09:52] Client "Bot09" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot10" connected.
+[23:09:52] Client "Bot10" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot11" connected.
+[23:09:52] Client "Bot11" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Bot06 suicided!
+[23:09:52] Client "Bot12" connected.
+[23:09:52] Client "Bot12" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Bot03 suicided!
+[23:09:52] Client "Bot13" connected.
+[23:09:52] Client "Bot13" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Client "Bot14" connected.
+[23:09:52] Client "Bot14" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Bot12 suicided!
+[23:09:52] Client "Bot15" connected.
+[23:09:52] Client "Bot15" spawned in server <BOT> (took 94 seconds).
+[23:09:52] Bot10 suicided!
+[23:09:52] Bot09 suicided!
+[23:09:52] Client "Bot16" connected.
+[23:09:52] Client "Bot16" spawned in server <BOT> (took 94 seconds).
+[23:09:53] Bot14 suicided!
+[23:10:00] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[23:10:07] [RUN]𝒜𝓃𝑔𝑒𝓁: !kickbot
+[23:10:13] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[23:10:13] KiriЕШka ударил КОТ C21H23NO5 на 15 урон(а)
+
+
+
+[23:12:38] New map: hr_antarctic_hospital_v1
+[23:12:50] Client "КОТ C21H23NO5" connected.
+[23:12:53] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[23:13:06] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 16 seconds).
+[23:13:27] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 34 seconds).
+[23:13:31] Client "KiriЕШka" connected.
+[23:13:42] Client "ГОЙДАрыч" connected.
+[23:13:51] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 20 seconds).
+[23:13:56] KiriЕШka: !menu
+[23:13:58] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 16 seconds).
+[23:14:48] KiriЕШka: !menu
+[23:15:32] (Console) добавил STEAM_1:0:623681121 в группу superadmin
+[23:15:36] KiriЕШka: !menu
+[23:15:44] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+[23:15:47] Client "КОТ C21H23NO5" connected.
+[23:16:06] Client "КОТ C21H23NO5" spawned in server <STEAM_0:0:623681121> (took 19 seconds).
+[23:16:28] КОТ C21H23NO5: !meni
+[23:16:32] КОТ C21H23NO5: !menu
+[23:16:34] [RUN]𝒜𝓃𝑔𝑒𝓁: !MENU
+[23:16:41] (Console) добавил STEAM_1:0:623681121 в группу superadmin
+[23:17:28] KiriЕШka: !menu
+[23:17:28] (Console) добавил КОТ C21H23NO5 в группу superadmin
+[23:17:39] КОТ C21H23NO5: !menu
+[23:17:44] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[23:17:48] КОТ C21H23NO5 добавил [RUN]𝒜𝓃𝑔𝑒𝓁 в группу superadmin
+[23:17:50] КОТ C21H23NO5 добавил KiriЕШka в группу superadmin
+[23:17:51] КОТ C21H23NO5 добавил ГОЙДАрыч в группу superadmin
+[23:18:00] KiriЕШka: !menu
+[23:18:16] KiriЕШka: !menu
+[23:18:27] КОТ C21H23NO5 добавил [RUN]𝒜𝓃𝑔𝑒𝓁 в группу operator
+[23:18:27] KiriЕШka переместился к ГОЙДАрыч
+[23:18:39] [RUN]𝒜𝓃𝑔𝑒𝓁: !menu
+[23:18:51] КОТ C21H23NO5 добавил [RUN]𝒜𝓃𝑔𝑒𝓁 в группу superadmin
+[23:18:59] [RUN]𝒜𝓃𝑔𝑒𝓁 выдал доступ "ulx noclip" группе operator
+[23:19:04] [RUN]𝒜𝓃𝑔𝑒𝓁 добавил [RUN]𝒜𝓃𝑔𝑒𝓁 в группу operator
+[23:19:07] КОТ C21H23NO5 добавил KiriЕШka в группу operator
+[23:19:09] КОТ C21H23NO5 добавил ГОЙДАрыч в группу operator
+[23:19:15] KiriЕШka: !menu
+[23:20:16] Dropped "КОТ C21H23NO5" from server<STEAM_0:0:623681121>
+[23:25:13] (Console) добавил [RUN]𝒜𝓃𝑔𝑒𝓁 в группу superadmin
+[23:33:37] ГОЙДАрыч suicided!
+[23:34:37] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_gorefast
+[23:34:39] ГОЙДАрыч suicided!
+[23:34:46] KiriЕШka suicided!
+[23:35:03] Server is shutting down/changing levels.
+
+
+
+[23:35:14] New map: cs_italy
+[23:35:31] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 22 seconds).
+[23:35:36] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 27 seconds).
+
+
+
+[23:36:20] New map: hr_antarctic_hospital_v1
+[23:36:34] Client "ГОЙДАрыч" connected.
+[23:36:37] Client "KiriЕШka" connected.
+[23:36:39] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[23:36:48] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 14 seconds).
+[23:36:56] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 19 seconds).
+[23:37:12] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 33 seconds).
+[23:50:06] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_hordeext_vomitter
+[23:50:38] KiriЕШka was killed by obj_vj_horde_bullet
+<Logging continued in "data/ulx_logs/08-01-24.txt">

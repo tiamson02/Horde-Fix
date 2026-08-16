@@ -1,0 +1,98 @@
+<Logging continued from "data/ulx_logs/07-31-24.txt">
+[00:03:25] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_horde_plague_soldier
+[00:04:09] ГОЙДАрыч was killed by npc_vj_horde_plague_soldier
+[00:06:49] KiriЕШka: !drop
+[00:07:54] Server is shutting down/changing levels.
+
+
+
+[00:08:01] New map: hr_chaste_v1
+[00:08:16] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 19 seconds).
+[00:08:22] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 25 seconds).
+[00:08:23] Dropped "ГОЙДАрыч" from server<STEAM_0:1:193545951>
+[00:08:41] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 44 seconds).
+[00:08:49] Client "ГОЙДАрыч" connected.
+[00:09:09] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 20 seconds).
+[00:09:51] Dropped "ГОЙДАрыч" from server<STEAM_0:1:193545951>
+[00:09:57] Client "ГОЙДАрыч" connected.
+[00:10:12] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 15 seconds).
+[00:10:33] Dropped "ГОЙДАрыч" from server<STEAM_0:1:193545951>
+[00:12:05] Client "ГОЙДАрыч" connected.
+[00:12:26] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 21 seconds).
+[00:17:45] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_horde_sprinter
+[00:23:10] ГОЙДАрыч was killed by npc_hordeext_stalker
+[00:28:13] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_stalker
+[00:30:54] ГОЙДАрыч was killed by npc_hordeext_stalker
+[00:34:44] KiriЕШka: !drop
+[00:44:47] ГОЙДАрыч was killed by npc_hordeext_gorefast
+[00:45:00] KiriЕШka was killed by npc_vj_hordeext_headcrab_baby
+[00:45:02] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_hordeext_headcrab_baby
+[00:45:48] Server is shutting down/changing levels.
+
+
+
+[00:45:54] New map: hr_moil_v1
+[00:46:12] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 21 seconds).
+[00:46:15] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 24 seconds).
+[00:46:29] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 38 seconds).
+[00:49:28] KiriЕШka: !menu
+[00:49:39] KiriЕШka: !menu
+[00:49:43] KiriЕШka: !menu
+[00:49:45] KiriЕШka: !menu
+[00:53:02] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_gorefast
+[01:01:05] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_crawler
+[01:15:21] KiriЕШka was killed by npc_vj_horde_hellknight
+[01:16:24] KiriЕШka: !drop
+[01:21:41] KiriЕШka: !menu
+[01:22:44] KiriЕШka: !menu
+[01:26:58] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_stalker
+[01:31:11] ГОЙДАрыч was killed by npc_hordeext_gorefast
+[01:35:19] KiriЕШka was killed by npc_vj_hordeext_lesion
+[01:35:53] Server is shutting down/changing levels.
+
+
+
+[01:35:56] New map: hr_moil_v1
+[01:36:12] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 18 seconds).
+[01:36:15] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 21 seconds).
+[01:36:24] Dropped "ГОЙДАрыч" from server<STEAM_0:1:193545951>
+[01:36:29] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 35 seconds).
+[01:42:55] Client "ГОЙДАрыч" connected.
+[01:43:17] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 22 seconds).
+[01:43:18] [RUN]𝒜𝓃𝑔𝑒𝓁: !rtv
+[01:43:26] ГОЙДАрыч: !rtv
+[01:43:30] KiriЕШka: !rtv
+[01:43:51] Server is shutting down/changing levels.
+
+
+
+[01:43:55] New map: hr_moil_v1
+[01:44:11] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 18 seconds).
+[01:44:13] Client "KiriЕШka" spawned in server <STEAM_0:1:239430976> (took 20 seconds).
+[01:44:26] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 33 seconds).
+[01:59:28] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_hordeext_gorefast
+[02:01:30] KiriЕШka suicided!
+[02:05:41] Dropped "KiriЕШka" from server<STEAM_0:1:239430976>
+[03:00:44] ГОЙДАрыч was killed by npc_vj_horde_plague_elite
+[03:01:14] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_horde_plague_elite
+[03:01:56] Server is shutting down/changing levels.
+
+
+
+[03:02:02] New map: hr_asylum_v1
+[03:02:20] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 20 seconds).
+[03:02:39] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 39 seconds).
+[03:24:55] [RUN]𝒜𝓃𝑔𝑒𝓁 was killed by npc_vj_hordeext_lesion
+[03:25:31] ГОЙДАрыч was killed by npc_vj_hordeext_lesion
+[03:25:51] Server is shutting down/changing levels.
+
+
+
+[03:25:58] New map: de_dust2
+[03:26:24] Client "ГОЙДАрыч" spawned in server <STEAM_0:1:193545951> (took 29 seconds).
+[03:27:00] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 65 seconds).
+[03:28:57] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>
+[03:28:58] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" connected.
+[03:29:26] Client "[RUN]𝒜𝓃𝑔𝑒𝓁" spawned in server <STEAM_0:0:117668937> (took 28 seconds).
+[03:33:59] Dropped "ГОЙДАрыч" from server<STEAM_0:1:193545951>
+[03:34:07] Dropped "[RUN]𝒜𝓃𝑔𝑒𝓁" from server<STEAM_0:0:117668937>

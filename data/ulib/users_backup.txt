@@ -1,0 +1,11 @@
+"STEAM_1:0:623681121"	
+{
+	"allow"	
+	{
+	}
+	"name"	КОТ C21H23NO5"
+	"deny"	
+	{
+	}
+	"group"	"superadmin"
+}

@@ -1,0 +1,1 @@
+451a743c8b47150345106ed5a40427d5899bbb654ed294ddcd3003417c99d4fc{"hr_jail_b1a":{"players_apocalypse":0.0,"config":1.0,"extra":[],"diffculty":3.0,"players":4.0,"wave":10.0,"players_nightmare":0.0},"hr_boxfort_v1":{"players_apocalypse":0.0,"players_nightmare":0.0,"wave":10.0,"extra":[],"players":3.0,"diffculty":3.0,"config":1.0}}
