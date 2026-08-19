@@ -63,9 +63,10 @@ function HORDE:LoadSkullTokens(ply)
 	path = "horde/tokens/" .. HORDE:ScrubSteamID(ply) .. ".txt"
 
 	if not file.Exists(path, "DATA") then
-		print("Path", path, "does not exist!")
+		-- New player: initialize a fresh token record and persist it.
 		ply:Horde_SetSkullTokens(0)
 		ply.Horde_Skull_Tokens_Loaded = true
+		HORDE:SaveSkullTokens(ply)
 		return
 	end
 

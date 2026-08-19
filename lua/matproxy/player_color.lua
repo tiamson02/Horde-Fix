@@ -16,6 +16,7 @@ matproxy.Add( {
 	end,
 
 	bind = function( self, mat, ent )
+		if ( !mat ) then return end
 		if ( !IsValid( ent ) ) then return end
 
 		-- If entity is a ragdoll try to convert it into the player

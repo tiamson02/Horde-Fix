@@ -65,10 +65,23 @@ function PANEL:SetData(item, description_panel, infusion_panel)
 
     self.level_satisfy = true
     if self.item.levels then
-        for class, level in pairs(self.item.levels) do
-            if MySelf:Horde_GetLevel(class) < level then
-                self.level_satisfy = false
-                break
+        local levels = self.item.levels
+        if levels.VariousConditions then
+            -- Resolve class-specific level requirements.
+            local levels2 = levels[MySelf:Horde_GetClass() and MySelf:Horde_GetClass().name]
+            if not levels2 then levels2 = levels["__Default__"] end
+            if isstring(levels2) then
+                levels = levels[levels2]
+            else
+                levels = levels2
+            end
+        end
+        if levels then
+            for class, level in pairs(levels) do
+                if type(level) == "number" and MySelf:Horde_GetLevel(class) < level then
+                    self.level_satisfy = false
+                    break
+                end
             end
         end
     end

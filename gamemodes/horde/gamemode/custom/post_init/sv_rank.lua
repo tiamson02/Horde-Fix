@@ -54,8 +54,13 @@ function HORDE:LoadRank(ply)
 		path = "horde/ranks/" .. steamid .. ".txt"
 
 		if not file.Exists(path, "DATA") then
-			print("Path", path, "does not exist!")
+			-- New player: initialize a fresh rank record and persist it.
+			for _, class in pairs(HORDE.classes) do
+				ply:Horde_SetLevel(class.name, 0)
+				ply:Horde_SetExp(class.name, 0)
+			end
 			ply.Horde_Rank_Loaded = true
+			HORDE:SaveRank(ply)
 			return
 		end
 	end

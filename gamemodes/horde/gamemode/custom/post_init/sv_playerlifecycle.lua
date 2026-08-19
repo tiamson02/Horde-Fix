@@ -242,6 +242,7 @@ function HORDE:GiveStarterWeapons(ply)
         ply:Horde_SetGivenStarterWeapons(true)
     end
 
+    if not ply:Horde_GetClass() then return end
     local yourclass = ply:Horde_GetClass().name
     if yourclass == HORDE.Class_Survivor then
         local wpns_class = table.Copy(HORDE.starter_weapons)
