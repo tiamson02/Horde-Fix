@@ -419,6 +419,7 @@ function PANEL:SetData(item)
         end
 
         self.item.subclass = subclass
+        if not subclass then return end
         self.item.base_perk = subclass.BasePerk
 
         self.exp_diff = MySelf:Horde_GetExp(self.item.subclass.PrintName)
@@ -794,6 +795,7 @@ function PANEL:Paint()
             end
 
         elseif self.item.extra_description then
+            if not self.item.subclass then return end
             self.class_progress:SetVisible(not self.perk_panel:IsVisible())
             if self.perk_panel:IsVisible() or self.subclass_panel:IsVisible() then
                 self.perk_description_panel:SetVisible(false)

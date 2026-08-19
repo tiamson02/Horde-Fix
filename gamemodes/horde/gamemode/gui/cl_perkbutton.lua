@@ -78,7 +78,7 @@ function PANEL:SetData(classname, perk_level, choice, subclass)
     self.info = {class = classname, perk_level = perk_level, choice = choice}
 
     local perk = HORDE.perks[perk_choice]
-    if not perk then error("Could not find perk '" .. perk .. "'!") return end
+    if not perk then return end
 
     local icon = perk.Icon
     if icon then
