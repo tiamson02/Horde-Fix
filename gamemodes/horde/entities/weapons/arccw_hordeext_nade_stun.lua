@@ -8,6 +8,7 @@ SWEP.Base = "arccw_hordeext_base_nade"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.PrintName = "M84 Stun"
 SWEP.Trivia_Class = "Hand Grenade"
@@ -43,7 +44,7 @@ SWEP.Primary.ClipSize = 1
 
 
 SWEP.MuzzleVelocity = 1000
-SWEP.ShootEntity = "arccw_thr_stun"
+SWEP.ShootEntity = "arccw_thr_ext_stun"
 
 SWEP.TTTWeaponType = "weapon_ttt_confgrenade"
 SWEP.NPCWeaponType = "weapon_grenade"

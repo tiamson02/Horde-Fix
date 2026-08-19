@@ -234,7 +234,7 @@ function ENT:Horde_EndTimeStop()
 end
 
 function ENT:CustomOnThink()
-	if self.Garg_AbleToFlame == false or self.AttackType != VJ_ATTACK_RANGE or !IsValid(self:GetEnemy()) then
+	if self.Garg_AbleToFlame == false or self.AttackType != VJ.ATTACK_TYPE_RANGE or !IsValid(self:GetEnemy()) then
 		self:Garg_ResetFlame()
 	end
 	if self.Critical then

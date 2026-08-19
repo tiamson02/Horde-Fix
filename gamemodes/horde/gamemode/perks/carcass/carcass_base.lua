@@ -17,8 +17,8 @@ Hold for a charged punch that deals increased damage in an area.]]
 PERK.Icon = "materials/subclasses/carcass.png"
 PERK.Params = {
     [1] = {percent = true, base = 0, level = 0.02, max = 0.5, classname = "Carcass"},
-    [2] = {value = 0.01, percent = true},
-    [3] = {value = 0.25, percent = true},
+    [2] = {value = 0.02, percent = true},
+    [3] = {value = 0.5, percent = true},
     [4] = {value = 0.5, percent = true},
     [5] = {value = 0.75, percent = true},
     [6] = {value = 0.05, percent = true},
@@ -29,8 +29,12 @@ PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
     if SERVER and perk == "carcass_base" then
         ply:Horde_SetMaxHypertrophyStack(ply:Horde_GetMaxHypertrophyStack() + 1)
         if ply:HasWeapon("horde_carcass") == true then return end
-        ply:StripWeapons()
-        timer.Simple(0, function() ply:Give("horde_carcass") end)
+        --ply:StripWeapons()
+        for _, wpn in pairs(ply:GetWeapons()) do
+            if wpn:GetClass() == "weapon_horde_medkit" then continue end
+            ply:DropWeapon(wpn)
+        end
+        timer.Simple(0.1, function() ply:Give("horde_carcass") end)
     end
 end
 
@@ -55,6 +59,7 @@ end
 PERK.Hooks.Horde_OnPlayerDamageTaken = function (ply, dmginfo, bonus)
     if not ply:Horde_GetPerk("carcass_base") then return end
     if ply:Horde_GetMaxHypertrophyStack() <= 0 then return end
+    if dmginfo:GetDamage() <= 0 then return end
     ply:Horde_AddHypertrophyStack()
 end
 

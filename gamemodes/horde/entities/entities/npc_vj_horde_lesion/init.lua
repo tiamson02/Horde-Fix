@@ -5,7 +5,7 @@ include('shared.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.Model = {"models/zombie/zombie_fast02.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
+ENT.Model = "models/vj_zombies/fast_main.mdl"
 ENT.StartHealth = 1000
 ENT.HullType = HULL_HUMAN
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,9 +22,9 @@ ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
 ENT.NextAnyAttackTime_Melee = 0.6
 ENT.AnimTbl_LeapAttack = {"leapstrike"} -- Melee Attack Animations
 ENT.LeapDistance = 400 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
-ENT.LeapToMeleeDistance = 150 -- How close does it have to be until it uses melee?
+ENT.LeapToMeleeDistance = 250 -- How close does it have to be until it uses melee?
 ENT.TimeUntilLeapAttackDamage = 0.2 -- How much time until it runs the leap damage code?
-ENT.NextLeapAttackTime = 10 -- How much time until it can use a leap attack?
+ENT.NextLeapAttackTime = 3 -- How much time until it can use a leap attack?
 ENT.NextAnyAttackTime_Leap = 1 -- How much time until it can use any attack again? | Counted in Seconds
 ENT.LeapAttackExtraTimers = {0.4,0.6,0.8,1} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
 ENT.TimeUntilLeapAttackVelocity = 0.2 -- How much time until it runs the velocity code?
@@ -41,14 +41,16 @@ ENT.MeleeAttackKnockBack_Forward2 = 130 -- How far it will push you forward | Se
 
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
-ENT.SoundTbl_FootStep = {"npc/fast_zombie/foot1.wav","npc/fast_zombie/foot2.wav","npc/fast_zombie/foot3.wav","npc/fast_zombie/foot4.wav"}
-ENT.SoundTbl_Breath = {"npc/fast_zombie/breathe_loop1.wav"}
-ENT.SoundTbl_Alert = {"npc/fast_zombie/fz_alert_close1.wav"}
-ENT.SoundTbl_MeleeAttack = {"npc/fast_zombie/claw_strike1.wav","npc/fast_zombie/claw_strike2.wav","npc/fast_zombie/claw_strike3.wav"}
-ENT.SoundTbl_MeleeAttackMiss = {"zsszombie/miss1.wav","zsszombie/miss2.wav","zsszombie/miss3.wav","zsszombie/miss4.wav"}
-ENT.SoundTbl_LeapAttackDamage = {"npc/fast_zombie/claw_strike1.wav","npc/fast_zombie/claw_strike2.wav","npc/fast_zombie/claw_strike3.wav"}
-ENT.SoundTbl_Pain = {"npc/fast_zombie/idle1.wav","npc/fast_zombie/idle2.wav","npc/fast_zombie/idle3.wav"}
-ENT.SoundTbl_Death = {"npc/fast_zombie/wake1.wav"}
+ENT.SoundTbl_FootStep = {"npc/fast_zombie/foot1.wav", "npc/fast_zombie/foot2.wav", "npc/fast_zombie/foot3.wav", "npc/fast_zombie/foot4.wav"}
+ENT.SoundTbl_Breath = "npc/fast_zombie/breathe_loop1.wav"
+ENT.SoundTbl_Alert = {"npc/fast_zombie/fz_alert_close1.wav", "npc/fast_zombie/fz_alert_far1.wav"}
+ENT.SoundTbl_MeleeAttack = {"npc/zombie/claw_strike1.wav", "npc/zombie/claw_strike2.wav", "npc/zombie/claw_strike3.wav"}
+ENT.SoundTbl_MeleeAttackExtra = {"npc/zombie/claw_strike1.wav", "npc/zombie/claw_strike2.wav", "npc/zombie/claw_strike3.wav"}
+ENT.SoundTbl_MeleeAttackMiss = {"vj_zombies/slow/miss1.wav", "vj_zombies/slow/miss2.wav", "vj_zombies/slow/miss3.wav", "vj_zombies/slow/miss4.wav"}
+ENT.SoundTbl_LeapAttackJump = "" --"npc/fast_zombie/fz_scream1.wav"
+ENT.SoundTbl_LeapAttackDamage = {"npc/fast_zombie/claw_strike1.wav", "npc/fast_zombie/claw_strike2.wav", "npc/fast_zombie/claw_strike3.wav"}
+ENT.SoundTbl_Pain = {"npc/fast_zombie/idle1.wav", "npc/fast_zombie/idle2.wav", "npc/fast_zombie/idle3.wav"}
+ENT.SoundTbl_Death = "npc/fast_zombie/wake1.wav"
 
 ENT.GeneralSoundPitch1 = 50
 ENT.GeneralSoundPitch2 = 50
@@ -58,7 +60,6 @@ ENT.HasSoundTrack = false
 ENT.Raging = nil
 ENT.Raged = nil
 ENT.DamageReceived = 0
-ENT.Attacks = 0
 
 ENT.HasWorldShakeOnMove = true -- Should the world shake when it's moving?
 ENT.WorldShakeOnMoveAmplitude = 6 -- How much the screen will shake | From 1 to 16, 1 = really low 16 = really high
@@ -73,7 +74,6 @@ function ENT:Rage()
     self:VJ_ACT_PLAYACTIVITY("BR2_Roar", true, 1.5, false)
     timer.Simple(1.5, function ()
         if not IsValid(self) then return end
-        self.AnimTbl_Run = ACT_RUN
         self.HasLeapAttack = true
         self.Raged = true
         self.Raging = false
@@ -85,7 +85,6 @@ function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(Vector(13, 13, 50), Vector(-13, -13, 0))
     self:SetModelScale(1.75)
     self.HasLeapAttack = false
-    self.AnimTbl_Run = ACT_WALK
 
     local id = self:GetCreationID()
     timer.Remove("Horde_FlayerRage" .. id)
@@ -100,6 +99,17 @@ function ENT:CustomOnInitialize()
     local mat = Material("models/horde/lesion/lesion_sheet", "mips smooth")
     self:SetSubMaterial(0, "models/horde/lesion/lesion_sheet")
     self:EmitSound("horde/lesion/lesion_roar.ogg", 1500, 80, 1, CHAN_STATIC)
+end
+
+function ENT:TranslateActivity(act)
+    if act == ACT_RUN or act == ACT_WALK then
+        if self.Raging or self.Raged then
+            return ACT_RUN
+        else
+            return ACT_WALK
+        end
+    end
+    return self.BaseClass.TranslateActivity(self, act)
 end
 
 function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt, isProp)
@@ -135,7 +145,6 @@ function ENT:UnRage()
     self.Raging = nil
     self.DamageReceived = 0
     self.HasLeapAttack = false
-    self.AnimTbl_Run = ACT_WALK
     self:SetColor(Color(255,255,255))
     local id = self:GetCreationID()
     timer.Remove("Horde_FlayerRage" .. id)
@@ -151,6 +160,7 @@ end
 
 function ENT:CustomOnLeapAttack_AfterChecks(hitEnt, isProp)
     if isProp then return end
+    if not self.Raged then return end
     if hitEnt and IsValid(hitEnt) and (HORDE:IsPlayerOrMinion(hitEnt) == true) then
         self:UnRage()
         hitEnt:Horde_AddDebuffBuildup(HORDE.Status_Bleeding, 60, self)
@@ -165,5 +175,18 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
         self.DamageReceived = 0
     end
 end
+
+--[[ --finish this later
+function ENT:CustomOnThink()
+    -- Holy VJank base
+    if self.Horde_Frostbitten then
+        if self.Horde_Frostbite then
+            self:SetPlaybackRate(0.6)
+        else
+            self:SetPlaybackRate(1)
+        end
+    end
+end
+]]
 
 VJ.AddNPC("Lesion","npc_vj_horde_lesion", "Zombies")

@@ -19,6 +19,7 @@ SWEP.Trivia_Country = "Combine"
 SWEP.Trivia_Year = 2010
 SWEP.Primary.MaxAmmo = 9
 SWEP.ForceDefaultAmmo = 0
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.Slot = 4
 
@@ -39,7 +40,7 @@ SWEP.FuseTime = 2
 
 SWEP.Throwing = true
 
-SWEP.Primary.ClipSize = 1
+SWEP.Primary.ClipSize = -1
 
 SWEP.MuzzleVelocity = 1000
 SWEP.ShootEntity = "arccw_thr_hemo"
@@ -48,7 +49,7 @@ SWEP.TTTWeaponType = "weapon_ttt_confgrenade"
 SWEP.NPCWeaponType = "weapon_grenade"
 SWEP.NPCWeight = 50
 
-SWEP.PullPinTime = 0.25
+SWEP.PullPinTime = 0.5
 
 SWEP.Animations = {
     ["draw"] = {
@@ -74,7 +75,7 @@ SWEP.Animations = {
     }
 }
 
-function SWEP:Initialize()
+function SWEP:CustomInitialize()
     if CLIENT then
         local vm = self.Owner:GetViewModel()
         vm:SetColor(Color(255, 0, 0))

@@ -35,12 +35,17 @@ end
 
 PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
     if SERVER and perk == "necromancer_base" then
+        ply:Flashlight(false)
         ply:Horde_SetMindRegenTick(0.25)
         ply:SetMaxArmor(0)
         if ply:HasWeapon("horde_void_projector") == true then return end
         ply:Horde_UnsetSpellWeapon()
-        ply:StripWeapons()
-        timer.Simple(0, function()
+        --ply:StripWeapons()
+        for _, wpn in pairs(ply:GetWeapons()) do
+            if wpn:GetClass() == "weapon_horde_medkit" then continue end
+            ply:DropWeapon(wpn)
+        end
+        timer.Simple(0.1, function()
             if !ply:Alive() then return end
             if !ply:Horde_GetPerk("necromancer_base") then return end
             ply:Give("horde_void_projector")

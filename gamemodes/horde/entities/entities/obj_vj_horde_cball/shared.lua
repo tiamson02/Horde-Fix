@@ -17,11 +17,13 @@ ENT.VJ_IsDetectableDanger = true
 
 if CLIENT then
 	local Name = "Combine Ball"
-	local LangName = "obj_vj_combineball"
+	local LangName = "obj_vj_horde_cball"
 	language.Add(LangName, Name)
-	killicon.Add(LangName,"HUD/killicons/default",Color(255,80,0,255))
+	--killicon.Add(LangName,"HUD/killicons/default",Color(255,80,0,255))
+    killicon.AddAlias(LangName, "projectile_horde_hyperblast_projectile")
 	language.Add("#"..LangName, Name)
-	killicon.Add("#"..LangName,"HUD/killicons/default",Color(255,80,0,255))
+	--killicon.Add("#"..LangName,"HUD/killicons/default",Color(255,80,0,255))
+    killicon.AddAlias("#"..LangName, "projectile_horde_hyperblast_projectile")
 
 	function ENT:Draw()
 		self:DrawModel()
@@ -31,8 +33,9 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 if !SERVER then return end
 
-ENT.Model = {"models/effects/combineball.mdl"} -- The models it should spawn with | Picks a random one from the table
-ENT.MoveCollideType = MOVECOLLIDE_FLY_BOUNCE
+ENT.Model = "models/effects/combineball.mdl" -- The models it should spawn with | Picks a random one from the table
+ENT.CollisionBehavior = VJ.PROJ_COLLISION_PERSIST
+ENT.CollisionDecal = "FadingScorch"
 ENT.RemoveOnHit = false -- Should it remove itself when it touches something? | It will run the hit sound, place a decal, etc.
 ENT.DoesDirectDamage = false -- Should it do a direct damage when it hits something?
 ENT.DirectDamage = 50 -- How much damage should it do when it hits something
@@ -44,17 +47,9 @@ ENT.SoundTbl_OnCollide = {"weapons/physcannon/energy_bounce1.wav","weapons/physc
 
 ENT.IdleSoundPitch = VJ_Set(100, 100)
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomPhysicsObjectOnInitialize(phys)
-	phys:Wake()
-	phys:SetMass(1)
-	phys:SetBuoyancyRatio(0)
-	phys:EnableDrag(false)
-	phys:EnableGravity(false)
-end
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnInitializeBeforePhys()
-	self:PhysicsInitSphere(1)
-	--construct.SetPhysProp(self:GetOwner(), self, 0, self:GetPhysicsObject(), {GravityToggle = false, Material = "metal_bouncy"})
+function ENT:InitPhys()
+	self:PhysicsInitSphere(1, "metal_bouncy")
+	construct.SetPhysProp(self:GetOwner(), self, 0, self:GetPhysicsObject(), {GravityToggle = false, Material = "metal_bouncy"})
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:SetCoreType(capture)
@@ -74,7 +69,7 @@ function ENT:CustomOnInitialize()
 	self:ResetSequence("idle")
 	self:SetCoreType(false)
 
-	util.SpriteTrail(self, 0, colorWhite, true, 15, 10, 0.2, 1 / 25 * 0.5, "sprites/combineball_trail_black_1.vmt")
+	util.SpriteTrail(self, 0, colorWhite, true, 15, 0, 0.1, 1 / 6 * 0.5, "sprites/combineball_trail_black_1.vmt")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:OnBounce(data, phys)
@@ -106,13 +101,16 @@ function ENT:OnBounce(data, phys)
 		end
 	end
 end
+
+local sdHit = {"weapons/physcannon/energy_disintegrate4.wav", "weapons/physcannon/energy_disintegrate5.wav"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnPhysicsCollide(data, phys)
+function ENT:OnCollision(data, phys)
 	local owner = self:GetOwner()
-	local hitEnt = data.HitEntity
+	--[[
+    local hitEnt = data.HitEntity
 	if IsValid(owner) then
 		if (VJ_IsProp(hitEnt)) or (owner:IsNPC() && owner:CheckRelationship(hitEnt) == D_HT && (hitEnt != owner) or true) then
-			self:CustomOnDoDamage_Direct(data, phys, hitEnt)
+			VJ.CreateSound(self, VJ_PICK(sdHit), 80)
 			local dmgInfo = DamageInfo()
 			dmgInfo:SetDamage(self.DirectDamage)
 			dmgInfo:SetDamageType(self.DirectDamageType)
@@ -122,7 +120,7 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 			hitEnt:TakeDamageInfo(dmgInfo, self)
 		end
 	else
-		self:CustomOnDoDamage_Direct(data, phys, hitEnt)
+		VJ.CreateSound(self, VJ_PICK(sdHit), 80)
 		local dmgInfo = DamageInfo()
 		dmgInfo:SetDamage(self.DirectDamage)
 		dmgInfo:SetDamageType(self.DirectDamageType)
@@ -131,7 +129,7 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 		dmgInfo:SetDamagePosition(data.HitPos)
 		hitEnt:TakeDamageInfo(dmgInfo, self)
 	end
-
+    ]]
 	local dataF = EffectData()
 	dataF:SetOrigin(data.HitPos)
 	util.Effect("cball_bounce", dataF)
@@ -141,7 +139,7 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 	dataF:SetNormal(data.HitNormal)
 	dataF:SetScale(50)
 	util.Effect("AR2Impact", dataF)
-
+    --[[
     local myPos = self:GetPos()
 	effects.BeamRingPoint(myPos, 0.2, 12, 512, 64, 0, color1, {material="sprites/lgtning.vmt", framerate=2, flags=0, speed=0, delay=0, spread=0})
 	effects.BeamRingPoint(myPos, 0.5, 12, 512, 64, 0, color2, {material="sprites/lgtning.vmt", framerate=2, flags=0, speed=0, delay=0, spread=0})
@@ -162,6 +160,8 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 	--util.VJ_SphereDamage(self, self, myPos, 250, 100, DMG_BLAST, true, true, {DisableVisibilityCheck=true, Force=80})
 
 	self:Remove()
+    ]]
+    self:DeathEffects()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:GravGunPunt(ply)
@@ -169,12 +169,46 @@ function ENT:GravGunPunt(ply)
 	self:GetPhysicsObject():EnableMotion(true)
 	return true
 end
----------------------------------------------------------------------------------------------------------------------------------------------
-local sdHit = {"weapons/physcannon/energy_disintegrate4.wav", "weapons/physcannon/energy_disintegrate5.wav"}
---
-function ENT:CustomOnDoDamage_Direct(data, phys, hitEnt)
-	VJ_CreateSound(hitEnt, VJ_PICK(sdHit), 80)
+
+function ENT:DeathEffects()
+	--[[
+    local dataF = EffectData()
+	dataF:SetOrigin(data.HitPos)
+	util.Effect("cball_bounce", dataF)
+
+	dataF = EffectData()
+	dataF:SetOrigin(data.HitPos)
+	dataF:SetNormal(data.HitNormal)
+	dataF:SetScale(50)
+	util.Effect("AR2Impact", dataF)
+    ]]
+
+    local myPos = self:GetPos()
+	effects.BeamRingPoint(myPos, 0.2, 12, 512, 64, 0, color1, {material="sprites/lgtning.vmt", framerate=2, flags=0, speed=0, delay=0, spread=0})
+	effects.BeamRingPoint(myPos, 0.5, 12, 512, 64, 0, color2, {material="sprites/lgtning.vmt", framerate=2, flags=0, speed=0, delay=0, spread=0})
+
+	local effectData = EffectData()
+	effectData:SetOrigin(myPos)
+	util.Effect("cball_explode", effectData)
+
+	VJ_EmitSound(self, "weapons/physcannon/energy_sing_explosion2.wav", 150)
+	util.ScreenShake(myPos, 20, 150, 1, 500)
+    
+    local owner = self.Owner
+    if not IsValid(owner) then
+        owner = self
+    end
+    
+    local dmg = DamageInfo()
+    dmg:SetAttacker(owner)
+    dmg:SetInflictor(self)
+    dmg:SetDamageType(DMG_CLUB)
+    dmg:SetDamage(60)
+    util.BlastDamageInfo(dmg, self:GetPos(), 150)
+    
+    self:Remove()
 end
+---------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 local color1 = Color(255, 255, 225, 32)
 local color2 = Color(255, 255, 225, 64)

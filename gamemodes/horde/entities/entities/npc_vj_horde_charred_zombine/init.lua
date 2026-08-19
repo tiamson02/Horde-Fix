@@ -1,17 +1,20 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
 
-ENT.Model = {"models/zombie/zombie_soldier.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
+ENT.Model = {"models/vj_zombies/zombine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 350
 ENT.HullType = HULL_WIDE_HUMAN
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"} -- NPCs with the same class with be allied to each other
 ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
+ENT.AnimTbl_MeleeAttack = ACT_MELEE_ATTACK2
+ENT.TimeUntilMeleeAttackDamage = false
 ENT.MeleeAttackDamage = 35
 ENT.MeleeAttackDistance = 30 -- How close does it have to be until it attacks?
 ENT.MeleeAttackDamageDistance = 70 -- How far does the damage go?
-ENT.SlowPlayerOnMeleeAttack = true -- If true, then the player will slow down
+ENT.MeleeAttackDamageAngleRadius = 180 -- We need this because its eye position ends up rotating too much on melee!
+ENT.SlowPlayerOnMeleeAttack = false -- If true, then the player will slow down
 ENT.SlowPlayerOnMeleeAttack_RunSpeed = 100 -- Running Speed when Slow Player is on
 ENT.SlowPlayerOnMeleeAttackTime = 5 -- How much time until player's Speed resets
 ENT.MeleeAttackBleedEnemy = false -- Should the player bleed when attacked by melee
@@ -25,13 +28,13 @@ ENT.FlinchAnimationDecreaseLengthAmount = 0.4 -- This will decrease the time it 
 ENT.HitGroupFlinching_Values = {{HitGroup = {HITGROUP_HEAD}, Animation = {ACT_FLINCH_HEAD}}, {HitGroup = {HITGROUP_LEFTARM}, Animation = {ACT_FLINCH_LEFTARM}}, {HitGroup = {HITGROUP_RIGHTARM}, Animation = {ACT_FLINCH_RIGHTARM}}, {HitGroup = {HITGROUP_LEFTLEG}, Animation = {ACT_FLINCH_LEFTLEG}}, {HitGroup = {HITGROUP_RIGHTLEG}, Animation = {ACT_FLINCH_RIGHTLEG}}}
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
-ENT.SoundTbl_FootStep = {"zsszombine/gear1.wav","zsszombine/gear2.wav","zsszombine/gear3.wav"}
-ENT.SoundTbl_Idle = {"zsszombine/idle1.wav","zsszombine/idle2.wav","zsszombine/idle3.wav","zsszombine/idle4.wav","zsszombine/idle5.wav"}
-ENT.SoundTbl_Alert = {"zsszombine/alert1.wav","zsszombine/alert2.wav","zsszombine/alert3.wav","zsszombine/alert4.wav","zsszombine/alert5.wav","zsszombine/alert6.wav"}
-ENT.SoundTbl_BeforeMeleeAttack = {"zsszombine/attack1.wav","zsszombine/attack2.wav","zsszombine/attack3.wav","zsszombine/attack4.wav"}
-ENT.SoundTbl_MeleeAttackMiss = {"zsszombie/miss1.wav","zsszombie/miss2.wav","zsszombie/miss3.wav","zsszombie/miss4.wav"}
-ENT.SoundTbl_Pain = {"zsszombine/pain1.wav","zsszombine/pain2.wav","zsszombine/pain3.wav","zsszombine/pain4.wav"}
-ENT.SoundTbl_Death = {"zsszombine/die1.wav","zsszombine/die2.wav"}
+ENT.SoundTbl_FootStep = {"vj_zombies/zombine/gear1.wav", "vj_zombies/zombine/gear2.wav", "vj_zombies/zombine/gear3.wav"}
+ENT.SoundTbl_Idle = {"vj_zombies/zombine/idle1.wav", "vj_zombies/zombine/idle2.wav", "vj_zombies/zombine/idle3.wav", "vj_zombies/zombine/idle4.wav", "vj_zombies/zombine/idle5.wav"}
+ENT.SoundTbl_Alert = {"vj_zombies/zombine/alert1.wav", "vj_zombies/zombine/alert2.wav", "vj_zombies/zombine/alert3.wav", "vj_zombies/zombine/alert4.wav", "vj_zombies/zombine/alert5.wav", "vj_zombies/zombine/alert6.wav"}
+ENT.SoundTbl_BeforeMeleeAttack = {"vj_zombies/zombine/attack1.wav", "vj_zombies/zombine/attack2.wav", "vj_zombies/zombine/attack3.wav", "vj_zombies/zombine/attack4.wav"}
+ENT.SoundTbl_MeleeAttackMiss = {"vj_zombies/slow/miss1.wav", "vj_zombies/slow/miss2.wav", "vj_zombies/slow/miss3.wav", "vj_zombies/slow/miss4.wav"}
+ENT.SoundTbl_Pain = {"vj_zombies/zombine/pain1.wav", "vj_zombies/zombine/pain2.wav", "vj_zombies/zombine/pain3.wav", "vj_zombies/zombine/pain4.wav"}
+ENT.SoundTbl_Death = {"vj_zombies/zombine/die1.wav", "vj_zombies/zombine/die2.wav"}
 
 ENT.GeneralSoundPitch1 = 100
 ENT.GeneralSoundPitch2 = 100
@@ -51,55 +54,54 @@ function ENT:CustomOnInitialize()
 	self:AddRelationship("npc_headcrab_fast D_LI 99")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:OnInput(key, activator, caller, data)
+	if key == "step" then
+		self:PlayFootstepSound()
+	elseif key == "melee" then
+		self:ExecuteMeleeAttack()
+	end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Controller_IntMsg(ply)
 	ply:ChatPrint("JUMP: To Pull Grenade (One time event!)")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnThink_AIEnabled()
-	local ene = self:GetEnemy()
-	
-	-- Pull out the grenade
-	if self.Zombine_GrenadeOut == false && ((self.VJ_IsBeingControlled == true && self.VJ_TheController:KeyDown(IN_JUMP)) or (self.VJ_IsBeingControlled == false)) then
-		if self.VJ_IsBeingControlled == true then
-			self.VJ_TheController:PrintMessage(HUD_PRINTCENTER, "Pulling Grenade Out!")
-			self:Zombine_CreateGrenade()
-		elseif IsValid(ene) && self.LatestEnemyDistance <= 250 then
-			self:Zombine_CreateGrenade()
-		end
-	end
-	
-	-- Animation Control
-	-- Has grenade
-	if IsValid(self.Zombine_Grenade) == true then
-		self.AnimTbl_IdleStand = {VJ_SequenceToActivity(self,"idle_grenade")}
-		if IsValid(ene) then
-			if self.LatestEnemyDistance < 1000 then
-				self.AnimTbl_Walk = {VJ_SequenceToActivity(self,"run_all_grenade")}
-				self.AnimTbl_Run = {VJ_SequenceToActivity(self,"run_all_grenade")}
-			else
-				self.AnimTbl_Walk = {VJ_SequenceToActivity(self,"walk_all_grenade")}
-				self.AnimTbl_Run = {VJ_SequenceToActivity(self,"walk_all_grenade")}
-			end
-		else
-			self.AnimTbl_Walk = {VJ_SequenceToActivity(self,"walk_all_grenade")}
-			self.AnimTbl_Run = {VJ_SequenceToActivity(self,"run_all_grenade")}
-		end
-	-- NO grenade
-	else
-		self.AnimTbl_IdleStand = {ACT_IDLE}
-		if IsValid(ene) then
-			if self.LatestEnemyDistance < 1000 then
-				self.AnimTbl_Walk = {ACT_RUN}
-				self.AnimTbl_Run = {ACT_RUN}
-			else
-				self.AnimTbl_Walk = {ACT_WALK}
-				self.AnimTbl_Run = {ACT_WALK}
-			end
-		else
-			self.AnimTbl_Walk = {ACT_WALK}
-			self.AnimTbl_Run = {ACT_RUN}
-		end
-	end
+function ENT:TranslateActivity(act)
+    -- We have an active grenade
+    if IsValid(self.Zombine_Grenade) then
+        if act == ACT_IDLE then
+            return ACT_HANDGRENADE_THROW1
+        elseif (act == ACT_WALK or act == ACT_RUN) && IsValid(self:GetEnemy()) then
+            if self.EnemyData.Distance < 1024 then -- Make it run when close to the enemy
+                return ACT_HANDGRENADE_THROW3
+            else
+                return ACT_HANDGRENADE_THROW2
+            end
+        end
+    elseif (act == ACT_WALK or act == ACT_RUN) then
+        if IsValid(self:GetEnemy()) then
+            if self.EnemyData.Distance < 1024 then -- Make it run when close to the enemy
+                return ACT_RUN
+            else
+                return ACT_WALK
+            end
+        end
+    end
+    return self.BaseClass.TranslateActivity(self, act)
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:OnThinkActive()
+    -- Pull out the grenade
+    if !self.Zombine_GrenadeOut then
+        if self.VJ_IsBeingControlled then
+            if  self.VJ_TheController:KeyDown(IN_JUMP) then
+                self.VJ_TheController:PrintMessage(HUD_PRINTCENTER, "Pulling Grenade Out!")
+                self:Zombine_CreateGrenade()
+            end
+        elseif IsValid(self:GetEnemy()) && self.EnemyData.Distance <= 384 && self:Health() <= 65 then
+            self:Zombine_CreateGrenade()
+        end
+    end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Zombine_CreateGrenade()
@@ -119,11 +121,13 @@ function ENT:Zombine_CreateGrenade()
 	end)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+--[[
 function ENT:MultipleMeleeAttacks()
     self.AnimTbl_MeleeAttack = {"vjseq_fastattack"}
     self.TimeUntilMeleeAttackDamage = 0.4
     self.MeleeAttackDamage = 25
 end
+]]
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnKilled(dmginfo,hitgroup)
 	if IsValid(self.Zombine_Grenade) then

@@ -39,12 +39,17 @@ PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
     if SERVER and perk == "hatcher_base" then
         if ply:HasWeapon("horde_pheropod") == true then return end
         for _, wpn in pairs(ply:GetWeapons()) do
+            if wpn:GetClass() == "weapon_horde_medkit" then continue end
             ply:DropWeapon(wpn)
         end
-        timer.Simple(0, function() ply:Give("horde_pheropod") end)
+        timer.Simple(0.1, function() ply:Give("horde_pheropod") end)
     end
 end
 
+PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
+    if SERVER and perk == "hatcher_base" then
+    end
+end
 
 PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
     if SERVER then
@@ -62,6 +67,39 @@ PERK.Hooks.Horde_OnPlayerDamage = function (ply, npc, bonus, hitgroup, dmginfo)
     if not ply:Horde_GetPerk("hatcher_base") then return end
     if HORDE:IsPoisonDamage(dmginfo) then
         bonus.increase = bonus.increase + ply:Horde_GetPerkLevelBonus("hatcher_base")
+    end
+end
+
+if not game.SinglePlayer() then -- This hud doesn't update too well in single player
+    local function nv_center(ent)
+        return ent:LocalToWorld((ent:OBBCenter() * 1.5) - (ent:OBBMins() + ent:OBBMaxs()))
+    end
+
+    local function nv_color()
+        return Color(120, 255, 120, 255)
+    end
+
+    local function nv_ents()
+        local entities = {}
+        for k, v in pairs(ents.FindByClass("npc_vj_horde_antlion")) do
+            if v:IsValid() and v:GetNWEntity("HordeOwner") == MySelf then
+                table.insert(entities, v)
+            end
+        end
+        return entities
+    end
+
+    PERK.Hooks.HUDPaint = function()
+        local ply = MySelf
+        if not ply:IsValid() then return end
+        if not ply:Horde_GetPerk("hatcher_base") then return end
+        surface.SetDrawColor(Color(nv_color().r,nv_color().g,nv_color().b,math.random(255)))
+        for id, ent in pairs(nv_ents()) do
+            local pos = nv_center(ent):ToScreen()
+            surface.DrawCircle(pos.x, pos.y, 30)
+            draw.DrawText(ent:Health(), "Trebuchet24",
+            pos.x - 15, pos.y - 15, nv_color(), TEXT_ALIGN_LEFT)
+        end
     end
 end
 

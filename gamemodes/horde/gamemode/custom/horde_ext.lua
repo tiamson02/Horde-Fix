@@ -36,7 +36,7 @@ local function ExtInclude(name, dir)
 	local sep = string.Split(name, "_")
 	name = dir .. name
 
-	-- Determine where to load the files
+	-- Determine where to load the files72dfgh
 	if sep[1] == "sv" then
 		if SERVER then
 			NEW_include(name)
@@ -119,4 +119,25 @@ AnalyzeDirection("")
 
 hook.Add( "InitPostEntity", "HORDE_EXT", function()
 	AnalyzeDirection("post_init/")
+	if CLIENT then
+
+		local function initsync()
+			local class = MySelf:Horde_GetClass()
+			if !class then
+				net.Start("Horde_InitClass")
+				net.WriteString(HORDE.Class_Survivor)
+				net.SendToServer()
+			end
+	
+			net.Start("Horde_PlayerInit")
+			net.SendToServer()
+		end
+	
+		timer.Create("Horde_ClientPlayerFix", .5, 5, function()
+			if !IsValid(MySelf) and IsValid(LocalPlayer()) then
+				MySelf = LocalPlayer()
+				initsync()
+			end
+		end)
+	end
 end )

@@ -11,40 +11,10 @@ DeriveGamemode("sandbox")
 
 function GM:Initialize()
     game.AddAmmoType({
-        name = "arccw_horde_nade_incendiary"
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_molotov"
-    })
-    game.AddAmmoType({
-        name = "arccw_nade_m67"
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_m67"
-    })
-    game.AddAmmoType({
         name = "arccw_nade_medic_ubgl"
     })
     game.AddAmmoType({
-        name = "arccw_nade_knife"
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_stun"
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_nanobot",
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_hemo",
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_shrapnel",
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_sonar",
-    })
-    game.AddAmmoType({
-        name = "arccw_horde_nade_emp",
+        name = "horde_arccw_knives"
     })
     game.AddAmmoType({
         name = "horde_mine",
@@ -137,16 +107,16 @@ if GetConVar("horde_disable_f1"):GetInt() == 0 then
         if GetConVar("horde_enable_sandbox"):GetBool() then
             ply:SendLua("hook.Run( 'StartSearch' )")
         else
-            StatsMenu(ply)
+            HORDE:StatsMenu(ply)
         end
     end
 end
 
-function GM:ShowTeam(ply) ConfigMenu(ply) end
+function GM:ShowTeam(ply) HORDE:ConfigMenu(ply) end
 
-function GM:ShowSpare1(ply) Shop(ply) end
+function GM:ShowSpare1(ply) HORDE:Shop(ply) end
 
-function GM:ShowSpare2(ply) Ready(ply) end
+function GM:ShowSpare2(ply) HORDE:Ready(ply) end
 
 local groups = { "group01", "group03" }
 local sex = { "female", "male" }

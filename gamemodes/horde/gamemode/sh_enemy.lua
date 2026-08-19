@@ -192,7 +192,7 @@ function HORDE:GetDefaultEnemiesData ()
     HORDE:CreateEnemy("Walker", "npc_vj_horde_walker",                      1.00,  1, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Sprinter", "npc_vj_horde_sprinter",                  0.85,  1, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Headcrab Zombie Torso", "npc_zombie_torso",          0.30,  1, false, 1, 1, 1, 1)
-    HORDE:CreateEnemy("Zombie Torso", "npc_vj_zss_czombietors",             0.30,  1, false, 0.5, 1, 1, 1)
+    HORDE:CreateEnemy("Zombie Torso", "npc_vj_zss_crabless_torso",             0.30,  1, false, 0.5, 1, 1, 1)
     HORDE:CreateEnemy("Exploder", "npc_vj_horde_exploder",                  0.25,  1, true, 1, 1, 1.25, 1)
 
     HORDE:CreateEnemy("Walker", "npc_vj_horde_walker",                      1.00,  2, false, 1, 1, 1, 1)
@@ -308,7 +308,7 @@ function HORDE:GetDefaultEnemiesData ()
     HORDE:CreateEnemy("Lesion", "npc_vj_horde_lesion",                      0.02,  9, true, 1, 1, 2, 1, nil,nil,nil,nil,nil,nil,nil,1)
     HORDE:CreateEnemy("Plague Elite", "npc_vj_horde_plague_elite",          0.015,  9, true, 1, 1, 3, 1, nil,nil,nil,nil,nil,nil,nil,1)
 
-    HORDE:CreateEnemy("zombie vj",        "npc_vj_zss_czombie",      1,    10, false, 1, 1, 1, 1, nil)
+    HORDE:CreateEnemy("zombie vj",        "npc_vj_zss_crabless_slow",1,    10, false, 1, 1, 1, 1, nil)
     HORDE:CreateEnemy("zombie fast",      "npc_fastzombie",          1,    10, false, 1, 1, 1, 1, nil)
     HORDE:CreateEnemy("zombie poison",    "npc_poisonzombie",        0.5,  10, false, 1, 1, 1, 1, nil)
     HORDE:CreateEnemy("Alpha Gonome",     "npc_vj_alpha_gonome",     1,    10, true,  1, 1, 10, 1, nil, nil, nil,

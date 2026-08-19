@@ -4,8 +4,7 @@ AddCSLuaFile( "shared.lua" )
 include( 'shared.lua' )
 
 function ENT:Initialize()
-	self:SetModel("models/props_junk/watermelon01_chunk02c.mdl")
-	self:SetMaterial("invis")
+	self:SetModel("models/dav0r/hoverball.mdl")
 	self:SetMoveCollide(3)
 	self:DrawShadow(false)
 	self:PhysicsInit(SOLID_VPHYSICS)
@@ -22,7 +21,7 @@ function ENT:Initialize()
 	end
 
     self:SetRenderMode(RENDERMODE_TRANSCOLOR)
-    self:SetColor(Color(0,0,0,0))
+    self:SetColor(Color(255,255,255,1))
 	
 	self.delayRemove = CurTime() + 60
 	if self:GetScale() > 1 then self.deploy = CurTime() +0.2 end
@@ -103,8 +102,9 @@ function ENT:PhysicsCollide(data, physobj)
     end
     
     timer.Simple(1, function ()
-        if !IsValid(self) or !IsValid(self.entOwner) then return end
-        if IsValid(ent) && (ent:IsPlayer() || ent:IsNPC()) then
+        if !IsValid(self) then return end
+        if !IsValid(self.entOwner) then self:StopSound("npc/stalker/laser_burn.wav") self:Remove() return end
+        if IsValid(ent) && HORDE:IsPlayerOrMinion(ent) then
             local dmg = DamageInfo()
             dmg:SetDamage(self:GetScale() * 2)
             dmg:SetDamageType(DMG_SHOCK)
@@ -112,13 +112,15 @@ function ENT:PhysicsCollide(data, physobj)
             dmg:SetInflictor(self)
             dmg:SetDamagePosition(data.HitPos)
             util.BlastDamageInfo(dmg, self:GetPos(), 150)
-            ParticleEffect("vj_explosionspark1", self:GetPos(), Angle(0,0,0), nil)
-            ParticleEffect("vj_explosionspark2", self:GetPos(), Angle(0,0,0), nil)
-            ParticleEffect("vj_explosionspark3", self:GetPos(), Angle(0,0,0), nil)
 
-            HORDE:ApplyDebuffInRadius(HORDE.Status_Shock, self:GetPos(), 150, 20, self)
+            --HORDE:ApplyDebuffInRadius(HORDE.Status_Shock, self:GetPos(), 150, 20, self)
         end
-        self:EmitSound("horde/kingpin/electro4.wav", 75, 100)
+        ParticleEffect("vj_explosionspark1", self:GetPos(), Angle(0,0,0), nil)
+        ParticleEffect("vj_explosionspark2", self:GetPos(), Angle(0,0,0), nil)
+        ParticleEffect("vj_explosionspark3", self:GetPos(), Angle(0,0,0), nil)
+        
+        self:EmitSound("horde/kingpin/electro4.ogg", 75, 100)
+        self:StopSound("npc/stalker/laser_burn.wav")
         self:Remove()
     end)
 end

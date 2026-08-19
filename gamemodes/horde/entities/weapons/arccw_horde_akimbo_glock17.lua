@@ -5,7 +5,7 @@ if CLIENT then
 end
 SWEP.Base = "arccw_mw2_abase"
 SWEP.Spawnable = true
-SWEP.Category = "ArcCW - MW2 - Unofficial"
+SWEP.Category = "Horde - Pistols"
 SWEP.AdminOnly = false
 SWEP.WeaponCamBone = tag_camera
 
@@ -29,7 +29,7 @@ SWEP.ViewModelFOV = 65
 
 SWEP.Damage = 40
 SWEP.DamageMin = 20
-SWEP.Range = 740 * 0.025  -- GAME UNITS * 0.025 = METRES
+SWEP.Range = 50  -- GAME UNITS * 0.025 = METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
@@ -48,6 +48,9 @@ SWEP.RecoilRise = 0.2
 SWEP.Delay = 0.079 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
+    {
+        Mode = 2,
+    },
     {
         Mode = 1,
     },
@@ -268,6 +271,31 @@ function SWEP:Hook_OnDeploy()
         if !IsValid(self) then return end
         self:Attach(9, "horde_akimbo_glock")
     end)
+end
+
+function SWEP:Hook_OnHolster()
+    self.Duallies_Primed = nil
+end
+
+DEFINE_BASECLASS(SWEP.Base)
+
+SWEP.Duallies_Delay = 0
+function SWEP:PrimaryAttack(...)
+    BaseClass.PrimaryAttack(self, ...)
+    if self:GetOwner():KeyDown(IN_ATTACK) and self:GetCurrentFiremode().Mode == 2 and self.Attachments[8].Installed == "horde_akimbo_glock" then
+        self.Duallies_Delay = CurTime() + self.Delay / 2
+        self.Duallies_Primed = true
+    end
+end
+
+function SWEP:Hook_Think()
+    if self.Duallies_Delay <= CurTime() and self.Duallies_Primed then
+        self.Duallies_Primed = nil
+        self:SetInUBGL(true)
+        self:SetNextSecondaryFire(CurTime())
+        self:ShootUBGL()
+        self:SetInUBGL(false)
+    end
 end
 
 SWEP.Animations = {

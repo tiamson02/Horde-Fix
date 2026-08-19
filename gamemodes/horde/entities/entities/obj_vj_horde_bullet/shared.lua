@@ -1,3 +1,8 @@
+if CLIENT then
+    language.Add("obj_vj_horde_bullet", "Boolet")
+    killicon.Add("obj_vj_horde_bullet", "attachments/horde_ammo_sabot.png", color_white)
+end
+
 /*--------------------------------------------------
 	*** Copyright (c) 2012-2023 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -39,31 +44,44 @@ ENT.DirectDamageType = DMG_BULLET -- Damage type
 ENT.TracerColor = Color(255,255,128)
 ENT.TracerWidth = 5
 ENT.Horde_Plague_Soldier = true
+ENT.dt = 0
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	--self:SetMaterial("models/effects/vol_light001.mdl")
 	self:DrawShadow(false)
 	self:SetRenderMode(RENDERMODE_TRANSCOLOR)
-	self:SetColor(Color(255,255,255,0))
-	util.SpriteTrail(self, 0, self.TracerColor, false, self.TracerWidth, self.TracerWidth, 0.1, 1/(8+8)*0.5, "VJ_Base/sprites/vj_trial1.vmt")
+	self:SetColor(Color(255,255,255,1))
+	util.SpriteTrail(self, 0, self.TracerColor, false, self.TracerWidth, self.TracerWidth, 0.1, 1/(8+8)*0.5, "vj_base/sprites/trail.vmt")
+    self.dt = CurTime() + 4
+end
 
-	timer.Simple(4, function ()
-		if !IsValid(self) then return end
-		self:Remove()
-	end)
+function ENT:Think()
+    if SERVER then
+        if CurTime() >= self.dt then
+            self:Remove()
+        end
+    end
 end
 
 function ENT:CustomOnDoDamage_Direct(data, phys, hitEnt)
+	if not hitEnt then
+		return
+	end
+    --[[
+    local owner = self.Owner
+    if not owner:IsValid() then
+        owner = self
+    end
 	if hitEnt:IsNPC() then
 		local damagecode = DamageInfo()
 		damagecode:SetDamage(self.DirectDamage / 2)
 		damagecode:SetDamageType(self.DirectDamageType)
-		damagecode:SetAttacker(self)
+		damagecode:SetAttacker(owner)
 		damagecode:SetInflictor(self)
 		damagecode:SetDamagePosition(self:GetPos())
 		hitEnt:TakeDamageInfo(damagecode, self)
 	end
-
+    ]]
 	if self.Weaken then
 		hitEnt:Horde_AddWeaken(self, 3, 1)
 	elseif self.Hinder then

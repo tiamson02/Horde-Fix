@@ -16,8 +16,8 @@ AddCSLuaFile()
 
 function ENT:CustomInitialize()
 	if CLIENT then
-    	ParticleEffectAttach("vj_rpg1_fulltrail", PATTACH_ABSORIGIN_FOLLOW, self, 0)
-		ParticleEffectAttach("vj_rpg2_fulltrail", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+    	ParticleEffectAttach("vj_rocket_idle1", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+		ParticleEffectAttach("vj_rocket_idle2", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 		return
 	end
 	self.StartLight1 = ents.Create("light_dynamic")
@@ -70,11 +70,11 @@ function ENT:CustomOnThink()
 
 		local phys = self:GetPhysicsObject()
 		if (!IsValid( phys )) then self:Remove() return end
-		phys:ApplyForceCenter(self:GetForward() * 500)
+		phys:ApplyForceCenter(self:GetForward() * 5000)
 	else
 		local phys = self:GetPhysicsObject()
 		if (!IsValid( phys )) then self:Remove() return end
-		phys:ApplyForceCenter(self:GetForward() * 500)
+		phys:ApplyForceCenter(self:GetForward() * 5000)
 	end
 end
 

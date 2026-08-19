@@ -257,7 +257,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo, hitgroup)
 end
 
 local finishAttack = {
-	[VJ_ATTACK_MELEE] = function(self, skipStopAttacks)
+	[VJ.ATTACK_TYPE_MELEE] = function(self, skipStopAttacks)
 		if skipStopAttacks != true then
 			timer.Create("timer_melee_finished"..self:EntIndex(), self:DecideAttackTimer(self.NextAnyAttackTime_Melee, self.NextAnyAttackTime_Melee_DoRand, self.TimeUntilMeleeAttackDamage, self.CurrentAttackAnimationDuration), 1, function()
 				self:StopAttacks()
@@ -268,7 +268,7 @@ local finishAttack = {
 			self.IsAbleToMeleeAttack = true
 		end)
 	end,
-	[VJ_ATTACK_RANGE] = function(self, skipStopAttacks)
+	[VJ.ATTACK_TYPE_RANGE] = function(self, skipStopAttacks)
 		if skipStopAttacks != true then
 			timer.Create("timer_range_finished"..self:EntIndex(), self:DecideAttackTimer(self.NextAnyAttackTime_Range, self.NextAnyAttackTime_Range_DoRand, self.TimeUntilRangeAttackProjectileRelease, self.CurrentAttackAnimationDuration), 1, function()
 				self:StopAttacks()
@@ -279,7 +279,7 @@ local finishAttack = {
 			self.IsAbleToRangeAttack = true
 		end)
 	end,
-	[VJ_ATTACK_LEAP] = function(self, skipStopAttacks)
+	[VJ.ATTACK_TYPE_LEAP] = function(self, skipStopAttacks)
 		if skipStopAttacks != true then
 			timer.Create("timer_leap_finished"..self:EntIndex(), self:DecideAttackTimer(self.NextAnyAttackTime_Leap, self.NextAnyAttackTime_Leap_DoRand, self.TimeUntilLeapAttackDamage, self.CurrentAttackAnimationDuration), 1, function()
 				self:StopAttacks()
@@ -348,7 +348,7 @@ function ENT:RangeAttackCode()
 	if self.AttackStatus < VJ_ATTACK_STATUS_EXECUTED then
 		self.AttackStatus = VJ_ATTACK_STATUS_EXECUTED
 		if self.TimeUntilRangeAttackProjectileRelease != false then
-			finishAttack[VJ_ATTACK_RANGE](self)
+			finishAttack[VJ.ATTACK_TYPE_RANGE](self)
 		end
 	end
 	self.AlreadyDoneRangeAttackFirstProjectile = true

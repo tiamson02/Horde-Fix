@@ -81,39 +81,42 @@ ENT.DamageThreshold = 5000
 ENT.DamageReceived = 0
 ENT.Horde_NoRandAngle = true
 
+ENT.Timer_Hemo = 3
+ENT.Timer_Norm = 2.5
+
 ENT.GeneralSoundPitch1 = 50
 ENT.GeneralSoundPitch2 = 50
-local finishAttack = {
-	[VJ_ATTACK_MELEE] = function(self, skipStopAttacks)
-		if skipStopAttacks != true then
-			timer.Create("timer_melee_finished"..self:EntIndex(), self:DecideAttackTimer(self.NextAnyAttackTime_Melee, self.NextAnyAttackTime_Melee_DoRand, self.TimeUntilMeleeAttackDamage, self.CurrentAttackAnimationDuration), 1, function()
+local attackTimers = {
+	[VJ.ATTACK_TYPE_MELEE] = function(self, skipStopAttacks)
+		if !skipStopAttacks then
+			timer.Create("attack_melee_reset" .. self:EntIndex(), self:GetAttackTimer(self.NextAnyAttackTime_Melee, self.TimeUntilMeleeAttackDamage, self.AttackAnimDuration), 1, function()
 				self:StopAttacks()
-				self:DoChaseAnimation()
+				self:MaintainAlertBehavior()
 			end)
 		end
-		timer.Create("timer_melee_finished_abletomelee"..self:EntIndex(), self:DecideAttackTimer(self.NextMeleeAttackTime, self.NextMeleeAttackTime_DoRand), 1, function()
+		timer.Create("attack_melee_reset_able" .. self:EntIndex(), self:GetAttackTimer(self.NextMeleeAttackTime), 1, function()
 			self.IsAbleToMeleeAttack = true
 		end)
 	end,
-	[VJ_ATTACK_RANGE] = function(self, skipStopAttacks)
-		if skipStopAttacks != true then
-			timer.Create("timer_range_finished"..self:EntIndex(), self:DecideAttackTimer(self.NextAnyAttackTime_Range, self.NextAnyAttackTime_Range_DoRand, self.TimeUntilRangeAttackProjectileRelease, self.CurrentAttackAnimationDuration), 1, function()
+	[VJ.ATTACK_TYPE_RANGE] = function(self, skipStopAttacks)
+		if !skipStopAttacks then
+			timer.Create("attack_range_reset" .. self:EntIndex(), self:GetAttackTimer(self.NextAnyAttackTime_Range, self.TimeUntilRangeAttackProjectileRelease, self.AttackAnimDuration), 1, function()
 				self:StopAttacks()
-				self:DoChaseAnimation()
+				self:MaintainAlertBehavior()
 			end)
 		end
-		timer.Create("timer_range_finished_abletorange"..self:EntIndex(), self:DecideAttackTimer(self.NextRangeAttackTime, self.NextRangeAttackTime_DoRand), 1, function()
+		timer.Create("attack_range_reset_able" .. self:EntIndex(), self:GetAttackTimer(self.NextRangeAttackTime), 1, function()
 			self.IsAbleToRangeAttack = true
 		end)
 	end,
-	[VJ_ATTACK_LEAP] = function(self, skipStopAttacks)
-		if skipStopAttacks != true then
-			timer.Create("timer_leap_finished"..self:EntIndex(), self:DecideAttackTimer(self.NextAnyAttackTime_Leap, self.NextAnyAttackTime_Leap_DoRand, self.TimeUntilLeapAttackDamage, self.CurrentAttackAnimationDuration), 1, function()
+	[VJ.ATTACK_TYPE_LEAP] = function(self, skipStopAttacks)
+		if !skipStopAttacks then
+			timer.Create("attack_leap_reset" .. self:EntIndex(), self:GetAttackTimer(self.NextAnyAttackTime_Leap, self.TimeUntilLeapAttackDamage, self.AttackAnimDuration), 1, function()
 				self:StopAttacks()
-				self:DoChaseAnimation()
+				self:MaintainAlertBehavior()
 			end)
 		end
-		timer.Create("timer_leap_finished_abletoleap"..self:EntIndex(), self:DecideAttackTimer(self.NextLeapAttackTime, self.NextLeapAttackTime_DoRand), 1, function()
+		timer.Create("attack_leap_reset_able" .. self:EntIndex(), self:GetAttackTimer(self.NextLeapAttackTime), 1, function()
 			self.IsAbleToLeapAttack = true
 		end)
 	end
@@ -121,68 +124,68 @@ local finishAttack = {
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnThink()
-	if self.Critical then
-	end
+    if self.IsFiringRocket then return end
+    if self.NextBlastTime < CurTime() then
+        local enemy = self:GetEnemy()
+        local EnemyDistance = self.EnemyData.Distance
+        if enemy and EnemyDistance < 350 then
+            if self.DamageReceived >= self.DamageThreshold then
+                sound.Play("weapons/physcannon/physcannon_claws_close.wav", self:GetPos())
+                sound.Play("weapons/physcannon/physcannon_claws_open.wav", self:GetPos())
+                self:VJ_ACT_PLAYACTIVITY("big_flinch", true, self.Timer_Hemo, false)
+                timer.Simple(self.Timer_Hemo, function()
+                    if not self:IsValid() then return end
+                    local blast = ents.Create("prop_combine_ball")
+                    blast:SetPos(self:GetPos())
+                    blast:SetParent(self)
+                    blast:Spawn()
+                    blast:Fire("explode","",0)
+                    local dmg = DamageInfo()
+                    dmg:SetAttacker(self)
+                    dmg:SetInflictor(self)
+                    dmg:SetDamageType(DMG_CRUSH)
+                    dmg:SetDamage(75)
+                    util.BlastDamageInfo(dmg, self:GetPos(), 500)
 
-	if self.DamageReceived >= self.DamageThreshold and CurTime() > self.NextBlastTime then
-		if self:GetEnemy() then
-			local EnemyDistance = self.NearestPointToEnemyDistance
-			if EnemyDistance < 350 then
-				sound.Play("weapons/physcannon/physcannon_charge.wav", self:GetPos())
-				self:VJ_ACT_PLAYACTIVITY("big_flinch", true, 3, false)
-				timer.Simple(3, function()
-					if not self:IsValid() then return end
-					local blast = ents.Create("prop_combine_ball")
-					blast:SetPos(self:GetPos())
-					blast:SetParent(self)
-					blast:Spawn()
-					blast:Fire("explode","",0)
-					local dmg = DamageInfo()
-					dmg:SetAttacker(self)
-					dmg:SetInflictor(self)
-					dmg:SetDamageType(DMG_CRUSH)
-					dmg:SetDamage(75)
-					util.BlastDamageInfo(dmg, self:GetPos(), 500)
+                    for _, ent in pairs(ents.FindInSphere(self:GetPos(), 450)) do
+                        if ent:IsPlayer() then
+                            ent:Horde_AddHemorrhage(self)
+                            ent:Horde_AddDebuffBuildup(HORDE.Status_Shock, 30)
+                        end
+                    end
+                end)
+                self.NextBlastTime = CurTime() + self.NextBlastCooldown
+                self.DamageReceived = 0
+                --attackTimers[VJ.ATTACK_TYPE_RANGE](self)
+            else
+                sound.Play("weapons/physcannon/physcannon_charge.wav", self:GetPos())
+                self:VJ_ACT_PLAYACTIVITY("big_flinch", true, self.Timer_Norm, false)
+                timer.Simple(self.Timer_Norm, function()
+                    if not self:IsValid() then return end
+                    local blast = ents.Create("prop_combine_ball")
+                    blast:SetPos(self:GetPos())
+                    blast:SetParent(self)
+                    blast:Spawn()
+                    blast:Fire("explode","",0)
+                    local dmg = DamageInfo()
+                    dmg:SetAttacker(self)
+                    dmg:SetInflictor(self)
+                    dmg:SetDamageType(DMG_CRUSH)
+                    dmg:SetDamage(75)
+                    util.BlastDamageInfo(dmg, self:GetPos(), 500)
 
-					for _, ent in pairs(ents.FindInSphere(self:GetPos(), 450)) do
-						if ent:IsPlayer() then
-							ent:Horde_AddHemorrhage(self)
-							ent:Horde_AddDebuffBuildup(HORDE.Status_Shock, 30)
-						end
-					end
-				end)
-				self.NextBlastTime = CurTime() + self.NextBlastCooldown
-				self.DamageReceived = 0
-				finishAttack[VJ_ATTACK_RANGE](self)
-			end
-		else
-			sound.Play("weapons/physcannon/physcannon_charge.wav", self:GetPos())
-			self:VJ_ACT_PLAYACTIVITY("big_flinch", true, 2.5, false)
-			timer.Simple(2.5, function()
-				if not self:IsValid() then return end
-				local blast = ents.Create("prop_combine_ball")
-				blast:SetPos(self:GetPos())
-				blast:SetParent(self)
-				blast:Spawn()
-				blast:Fire("explode","",0)
-				local dmg = DamageInfo()
-				dmg:SetAttacker(self)
-				dmg:SetInflictor(self)
-				dmg:SetDamageType(DMG_CRUSH)
-				dmg:SetDamage(75)
-				util.BlastDamageInfo(dmg, self:GetPos(), 500)
-
-				for _, ent in pairs(ents.FindInSphere(self:GetPos(), 450)) do
-					if ent:IsPlayer() then
-						ent:Horde_AddDebuffBuildup(HORDE.Status_Bleeding, 60)
-						ent:Horde_AddDebuffBuildup(HORDE.Status_Shock, 30)
-					end
-				end
-			end)
-			self.NextBlastTime = CurTime() + self.NextBlastCooldown
-			finishAttack[VJ_ATTACK_RANGE](self)
-		end
-	end
+                    for _, ent in pairs(ents.FindInSphere(self:GetPos(), 450)) do
+                        if ent:IsPlayer() then
+                            ent:Horde_AddDebuffBuildup(HORDE.Status_Bleeding, 60)
+                            ent:Horde_AddDebuffBuildup(HORDE.Status_Shock, 30)
+                        end
+                    end
+                end)
+                self.NextBlastTime = CurTime() + self.NextBlastCooldown
+                --attackTimers[VJ.ATTACK_TYPE_RANGE](self)
+            end
+        end
+    end
 end
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -190,6 +193,7 @@ function ENT:CustomOnInitialize()
 	self:SetColor(Color(148,0,211))
 	self:SetCollisionBounds(Vector(25, 25, 90), Vector(-25, -25, 0))
 	self:SetModelScale(1.25)
+    self.NextBlastTime = CurTime() + self.NextBlastCooldown
 	timer.Simple(1, function() self.DamageThreshold = self:GetMaxHealth() * 0.05 end)
 
 	local pos = Vector()
@@ -239,48 +243,65 @@ function ENT:CustomOnInitialize()
 	self:AddRelationship("npc_headcrab_fast D_LI 99")
 end
 
-function ENT:RangeAttackCode()
-	if self.Dead == true or self.vACT_StopAttacks == true or self.Flinching == true or self.MeleeAttacking == true then return end
-	if IsValid(self:GetEnemy()) then
-		self.RangeAttacking = true
-		self:PlaySoundSystem("RangeAttack")
-		if self.RangeAttackAnimationStopMovement == true then self:StopMoving() end
-		if self.RangeAttackAnimationFaceEnemy == true then self:FaceCertainEntity(self:GetEnemy(), true) end
-		self:CustomRangeAttackCode()
-		-- Default projectile code
-		local projectile = ents.Create(self.RangeAttackEntityToSpawn)
-		projectile:SetPos(self.model:GetPos())
-		projectile:SetAngles((self:GetEnemy():GetPos() - projectile:GetPos()):Angle())
-		self:CustomRangeAttackCode_BeforeProjectileSpawn(projectile)
-		projectile:SetOwner(self)
-		projectile:SetPhysicsAttacker(self)
-		projectile:Spawn()
-		projectile:Activate()
-		local phys = projectile:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:Wake()
-			local vel = (self:GetEnemy():GetPos() - self.model:GetPos())*2
-			phys:SetVelocity(vel)
-			self.model:MuzzleFlash()
-			--projectile:SetAngles(vel:GetNormal():Angle())
-		end
-		if self.Critical then
-			projectile.OwnerCritical = true
-		end
-		self:CustomRangeAttackCode_AfterProjectileSpawn(projectile)
-	end
-	if self.AlreadyDoneRangeAttackFirstProjectile == false && self.TimeUntilRangeAttackProjectileRelease != false then
-		self:RangeAttackCode_DoFinishTimers()
-	end
-	self.AlreadyDoneRangeAttackFirstProjectile = true
-	finishAttack[VJ_ATTACK_RANGE](self)
+function ENT:OnRangeAttack(status, enemy)
+    if not self.IsAbleToRangeAttack then return end
+    self.IsFiringRocket = true
 end
 
+function ENT:ExecuteRangeAttack()
+    local selfData = self:GetTable()
+	if selfData.Dead or selfData.PauseAttacks or selfData.Flinching or selfData.AttackType == VJ.ATTACK_TYPE_MELEE then return end
+    local ene = self:GetEnemy()
+	local eneValid = IsValid(ene)
+	if eneValid then
+		selfData.AttackType = VJ.ATTACK_TYPE_RANGE
+		//self:PointAtEntity(ene)
+		-- Create projectile
+		if !self:OnRangeAttackExecute("Init", ene) then
+			local projectile = ents.Create(self.RangeAttackEntityToSpawn)
+			local target_pos = self:GetEnemy():GetPos()
+			projectile:SetPos(self:GetAttachment(1).Pos + Vector(0, 0, 10))
+			projectile:SetAngles((target_pos - projectile:GetPos()):Angle())
+			projectile:SetOwner(self)
+			projectile:SetPhysicsAttacker(self)
+            if self.Critical then
+                projectile.OwnerCritical = true
+            end
+			projectile:Spawn()
+			projectile:Activate()
+			//constraint.NoCollide(self, projectile, 0, 0)
+			local phys = projectile:GetPhysicsObject()
+			if IsValid(phys) then
+				phys:Wake()
+				--local vel = self:RangeAttackProjVel(projectile)
+				local vel = (target_pos - self:GetAttachment(1).Pos) * 1.5
+				phys:SetVelocity(vel)
+				projectile:SetAngles(vel:GetNormalized():Angle())
+				self.model:MuzzleFlash()
+			else
+				local vel = self:RangeAttackProjVel(projectile)
+				projectile:SetVelocity(vel)
+				projectile:SetAngles(vel:GetNormalized():Angle())
+			end
+			self:OnRangeAttackExecute("PostSpawn", ene, projectile)
+		end
+	end
+	if selfData.AttackState < VJ.ATTACK_STATE_EXECUTED then
+		if eneValid then -- Play range attack only once, otherwise it will spam it for every projectile!
+			self:PlaySoundSystem("RangeAttack")
+		end
+		selfData.AttackState = VJ.ATTACK_STATE_EXECUTED
+		if selfData.TimeUntilRangeAttackProjectileRelease then
+			attackTimers[VJ.ATTACK_TYPE_RANGE](self)
+            self.IsFiringRocket = nil
+		end
+	end
+end
 
 function ENT:MultipleMeleeAttacks()
 	local EnemyDistance = self:VJ_GetNearestPointToEntityDistance(self:GetEnemy(),self:GetPos():Distance(self:GetEnemy():GetPos()))
 	if EnemyDistance < 100 then
-		self.MeleeAttackDistance = 35
+		self.MeleeAttackDistance = 45
 		self.TimeUntilMeleeAttackDamage = 0.6
 		self.MeleeAttackAnimationFaceEnemy = false
 		self.AnimTbl_MeleeAttack = {"vjseq_attack1"}
@@ -299,9 +320,9 @@ end
 function ENT:CustomOnMeleeAttack_AfterChecks(TheHitEntity)
 	ParticleEffect("vomit_barnacle",TheHitEntity:GetPos() + self:GetUp()* 10,Angle(0,0,0),nil)
 	ParticleEffect("blood_impact_green_01",TheHitEntity:GetPos(),Angle(0,0,0),nil)
-	ParticleEffect("antlion_gib_02_gas",TheHitEntity:GetPos(),Angle(0,0,0),nil)
-	ParticleEffect("antlion_gib_02_gas",TheHitEntity:GetPos() + self:GetUp()* 10,Angle(0,0,0),nil)
-	ParticleEffect("antlion_gib_02_juice",TheHitEntity:GetPos() + self:GetUp()* 10,Angle(0,0,0),nil)
+	--ParticleEffect("antlion_gib_02_gas",TheHitEntity:GetPos(),Angle(0,0,0),nil)
+	--ParticleEffect("antlion_gib_02_gas",TheHitEntity:GetPos() + self:GetUp()* 10,Angle(0,0,0),nil)
+	--ParticleEffect("antlion_gib_02_juice",TheHitEntity:GetPos() + self:GetUp()* 10,Angle(0,0,0),nil)
 
 	if TheHitEntity and IsValid(TheHitEntity) and TheHitEntity:IsPlayer() then
         TheHitEntity:Horde_AddHemorrhage(self)
@@ -316,11 +337,24 @@ ENT.Critical = false
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
     if not self.Critical and self:Health() < self:GetMaxHealth() / 2 then
         self.Critical = true
-		self.AnimTbl_Walk = ACT_RUN
-		self.AnimTbl_Run = ACT_RUN
-		self.AnimationPlaybackRate = 1.25
+        self:SetPlaybackRate(1.25)
+        self.Timer_Hemo = 2.4
+        self.Timer_Norm = 2
     end
 	self.DamageReceived = self.DamageReceived + dmginfo:GetDamage()
+end
+
+function ENT:TranslateActivity(act)
+    --[[
+    if act == ACT_RUN or act == ACT_WALK then
+        if self.Critical then
+            return ACT_RUN
+        else
+            return ACT_WALK
+        end
+    end
+    ]]
+    return self.BaseClass.TranslateActivity(self, act)
 end
 
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo, hitgroup)

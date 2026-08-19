@@ -9,6 +9,7 @@ HORDE.perks = HORDE.perks or {}
 if SERVER then
 util.AddNetworkString("Horde_PerkStartCooldown")
 util.AddNetworkString("Horde_PerkChargesUpdate")
+util.AddNetworkString("Horde_PerkCooldownCheck")
 end
 
 if CLIENT then
@@ -203,11 +204,25 @@ if game.SinglePlayer() then
             ply.Horde_In_LShift = nil
         end
     end)
+
+    hook.Add("PlayerButtonDown", "Horde_G_Key", function(ply, key)
+        if GetConVar("horde_disable_default_quick_grenade_key"):GetInt() == 1 then return end
+        if (key == KEY_G) then
+            ply:ConCommand("horde_use_quick_grenade")
+        end
+    end)
 else
     if CLIENT then
     hook.Add("PlayerButtonDown", "Horde_UseKeyAndShift", function(ply, key)
         if (key == KEY_E) and input.IsButtonDown(KEY_LSHIFT) then
             ply:ConCommand("horde_use_perk_skill")
+        end
+    end)
+
+    hook.Add("PlayerButtonDown", "Horde_G_Key", function(ply, key)
+        if GetConVar("horde_disable_default_quick_grenade_key"):GetInt() == 1 then return end
+        if (key == KEY_G) then
+            ply:ConCommand("horde_use_quick_grenade")
         end
     end)
     end
@@ -231,6 +246,11 @@ end
 
 function plymeta:Horde_SetPerkCooldown(cd)
     self.Horde_PerkCooldown = cd
+    if SERVER then
+        net.Start("Horde_PerkCooldownCheck")
+            net.WriteInt(cd, 8)
+        net.Send(self)
+    end
 end
 
 function plymeta:Horde_SetPerkInternalCooldown(cd)
@@ -268,29 +288,195 @@ end
 
 
 if SERVER then
-    function HORDE:UsePerkSkill(ply)
-        if ply:Horde_GetSpamPerkCooldown() <= CurTime() and ply:Horde_GetPerkInternalCooldown() <= 0 and ply:Alive() then
-            local res = hook.Run("Horde_UseActivePerk", ply)
-            if res then return end
-            ply:Horde_SetPerkInternalCooldown(ply:Horde_GetPerkCooldown())
-            net.Start("Horde_PerkStartCooldown")
-                net.WriteUInt(ply:Horde_GetPerkCooldown(), 8)
-            net.Send(ply)
-        end
-    end
-
     function HORDE:RefreshPerkCooldown(ply)
         ply:Horde_SetPerkInternalCooldown(0)
         net.Start("Horde_PerkStartCooldown")
             net.WriteUInt(0, 8)
         net.Send(ply)
     end
+    
+    local think_t = 0.5
+    local BufferTime = 0.5 -- +-0.25s
+    function HORDE:UsePerkSkill(ply, auto)
+        if ply:Horde_GetSpamPerkCooldown() <= CurTime() and ply:Alive() then
+            local cd = ply:Horde_GetPerkInternalCooldown()
+            if(cd > 0 && !auto) then
+                if(cd <= BufferTime) and ply:Horde_GetPerkCooldown() >= 1 then
+                    ply.QueuedPerkSkill = true
+                end
+                return
+            end
+            local res = hook.Run("Horde_UseActivePerk", ply)
+            if res then return end
+            ply:Horde_SetPerkInternalCooldown(ply:Horde_GetPerkCooldown())
+            ply:Horde_SetPerkNextThink(CurTime() + think_t)
+            net.Start("Horde_PerkStartCooldown")
+                net.WriteUInt(ply:Horde_GetPerkCooldown(), 8)
+            net.Send(ply)
+        end
+    end
 
     hook.Add("PlayerPostThink", "Horde_PerkCooldown", function(ply)
         if CurTime() >= ply:Horde_GetPerkNextThink() then
-            if ply:Horde_GetPerkInternalCooldown() <= 0 then return end
-            ply:Horde_SetPerkInternalCooldown(ply:Horde_GetPerkInternalCooldown() - 1)
-            ply:Horde_SetPerkNextThink(CurTime() + 1)
+            ply:Horde_SetPerkNextThink(CurTime() + think_t)
+            local cd = ply:Horde_GetPerkInternalCooldown()
+            local newcd = cd - think_t
+            if(newcd <= 0) then
+                if(ply.QueuedPerkSkill) then
+                    newcd = 0
+                    HORDE:UsePerkSkill(ply, true)
+                    ply.QueuedPerkSkill = false
+                    return
+                end
+            end
+            if(cd <= 0) then
+                return
+            end
+            ply:Horde_SetPerkInternalCooldown(newcd)
         end
     end)
+
+    -- Quick Grenade. It's hand crafted for now so it won't work with workshop subclasses.
+    function HORDE:UseQuickGrenade(ply)
+        --if ply:HasWeapon("horde_carcass") or ply:HasWeapon("horde_astral_relic") or ply:HasWeapon("horde_void_projector") or ply:HasWeapon("horde_solar_seal") then return end
+        local classes = {
+            --[[ -- Survivor and Psycho will get their own special grenade instead of default. Default grenade doesn't work well.
+            ["Survivor"] = {
+                grenadeclass = "weapon_frag",
+                grenadethrown = "npc_grenade_frag",
+            },
+            ["Psycho"] = {
+                grenadeclass = "weapon_frag",
+                grenadethrown = "npc_grenade_frag",
+            },
+            ]]
+            ["Assault"] = {
+                grenadeclass = "arccw_horde_nade_stun",
+                grenadethrown = "arccw_thr_stun",
+            },
+            ["SpecOps"] = {
+                grenadeclass = "arccw_horde_nade_stun",
+                grenadethrown = "arccw_thr_stun",
+            },
+            ["Heavy"] = {
+                grenadeclass = "arccw_horde_nade_shrapnel",
+                grenadethrown = "arccw_thr_shrapnel",
+            },
+            --Carcass can't use grenades
+            ["Medic"] = {
+                grenadeclass = "arccw_nade_medic",
+                grenadethrown = "arccw_thr_medicgrenade",
+            },
+            ["Hatcher"] = {
+                grenadeclass = "arccw_nade_medic",
+                grenadethrown = "arccw_thr_medicgrenade",
+            },
+            ["Demolition"] = {
+                grenadeclass = "arccw_horde_m67",
+                grenadethrown = "arccw_thr_horde_m67",
+            },
+            --Warlock can't use grenades
+            ["Warlock"] = {
+                grenadeclass = "the_illuminati_group",
+                grenadethrown = "projectile_horde_illuminate",
+            },
+            ["Ghost"] = {
+                grenadeclass = "arccw_horde_nade_sonar",
+                grenadethrown = "arccw_thr_sonar",
+            },
+            ["Gunslinger"] = {
+                grenadeclass = "arccw_horde_nade_sonar",
+                grenadethrown = "arccw_thr_sonar",
+            },
+            ["Engineer"] = {
+                grenadeclass = "arccw_horde_nade_nanobot",
+                grenadethrown = "arccw_thr_nanobot",
+            },
+            --Necromancer can't use grenades
+            ["Necromancer"] = {
+                grenadeclass = "the_illuminati_group",
+                grenadethrown = "projectile_horde_illuminate",
+            },
+            ["Berserker"] = {
+                grenadeclass = "arccw_horde_nade_hemo",
+                grenadethrown = "arccw_thr_hemo",
+            },
+            ["Samurai"] = {
+                grenadeclass = "arccw_horde_nade_hemo",
+                grenadethrown = "arccw_thr_hemo",
+            },
+            ["Warden"] = {
+                grenadeclass = "arccw_horde_nade_emp",
+                grenadethrown = "arccw_thr_emp",
+            },
+            ["Overlord"] = {
+                grenadeclass = "arccw_horde_nade_emp",
+                grenadethrown = "arccw_thr_emp",
+            },
+            ["Cremator"] = {
+                grenadeclass = "arccw_horde_nade_molotov",
+                grenadethrown = "arccw_thr_horde_molotov",
+            },
+            --Artificer can't use grenades
+            ["Artificer"] = {
+                grenadeclass = "the_illuminati_group",
+                grenadethrown = "projectile_horde_illuminate",
+            },
+        }
+        if classes[ply:Horde_GetCurrentSubclass()] == nil then return end
+        
+        if not ply.Horde_GrenadeSpamCooldown then
+            ply.Horde_GrenadeSpamCooldown = 0
+        end
+        
+        if ply.Horde_GrenadeSpamCooldown > CurTime() then return true end
+        ply.Horde_GrenadeSpamCooldown = CurTime() + 0.35
+        
+        local nade = ply:GetActiveWeapon()
+        
+        if classes[ply:Horde_GetCurrentSubclass()].grenadeclass ~= "the_illuminati_group" then
+            if ply:GetAmmoCount("Grenade") <= 0 or nade.Base == "arccw_horde_base_nade" or (!ply:HasWeapon(classes[ply:Horde_GetCurrentSubclass()].grenadeclass)) then 
+                ply:EmitSound("player/suit_denydevice.wav")
+                return 
+            end
+            ply:SetAmmo(ply:GetAmmoCount("Grenade") - 1, "Grenade")
+            ply.GrenadeDampened = true
+        end
+        
+        local grenade = ents.Create(classes[ply:Horde_GetCurrentSubclass()].grenadethrown)
+        local vel = 15
+        local ang = ply:EyeAngles()
+
+        local src = (ply:EyePos() + Vector(0,0,-3) + ( ply:GetAimVector() * 16 ) + (ply:GetRight()*-4))
+
+        if !grenade:IsValid() then print("!!! INVALID ROUND " .. grenade) return end
+
+        local grenadeAng = Angle(ang.p, ang.y, ang.r)
+
+        grenade:SetAngles(grenadeAng)
+        grenade:SetPos(src)
+
+        grenade:SetOwner(ply)
+        grenade.Owner = ply
+        grenade.Inflictor = grenade
+
+        local RealVelocity = (ply:GetAbsVelocity() or Vector(0, 0, 0)) + ang:Forward() * vel / 0.0254
+        grenade.CurVel = RealVelocity -- for non-physical projectiles that move themselves
+
+        grenade:Spawn()
+        grenade:Activate()
+        
+        local spin = grenade:GetPhysicsObject()
+        spin:AddAngleVelocity(Vector(0, -750, 0))
+        
+        if !grenade.NoPhys and grenade:GetPhysicsObject():IsValid() then
+            grenade:SetCollisionGroup(grenade.CollisionGroup or COLLISION_GROUP_DEBRIS)
+            grenade:GetPhysicsObject():SetVelocityInstantaneous(RealVelocity)
+        end
+
+        if grenade.Launch and grenade.SetState then
+            grenade:SetState(1)
+            grenade:Launch()
+        end
+    end
 end

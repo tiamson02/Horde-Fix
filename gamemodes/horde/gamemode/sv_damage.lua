@@ -364,11 +364,11 @@ hook.Add("EntityTakeDamage", "Horde_ApplyMinionDamageTaken", function(target, dm
     if dmg:GetAttacker():IsPlayer() then return true end
     hook.Run("Horde_OnMinionDamageTaken", target, dmg)
     if dmg:GetDamage() <= 0.5 then return true end
-
+    --[[
     if dmg:GetAttacker():GetClass() == "npc_vj_horde_grigori" or dmg:GetAttacker().Horde_Plague_Soldier then
         dmg:ScaleDamage(2.5)
     end
-
+    ]]
     local debuff = nil
     local bonus = { more = 1 }
     if dmg:GetDamage() > 0 then
@@ -417,13 +417,8 @@ end)
 
 hook.Add("Horde_OnPlayerDamageTaken", "Horde_MeteorDefense", function(ply, dmginfo, bonus)
     if ply:Horde_GetMaxMind() > 0 and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "projectile_horde_meteor" then
-        if dmginfo:IsDamageType(DMG_BLAST) then
-            dmginfo:SetDamage(math.min(10, dmginfo:GetDamage()))
-            dmginfo:SetDamageType(DMG_DIRECT)
-        else
-            dmginfo:SetDamage(math.min(70, dmginfo:GetDamage()))
-            dmginfo:SetDamageType(DMG_DIRECT)
-        end
+        dmginfo:SetDamage(math.min(10, dmginfo:GetDamage()))
+        dmginfo:SetDamageType(DMG_DIRECT)
     end
 end)
 
@@ -440,3 +435,182 @@ hook.Add("ScaleNPCDamage", "Horde_BossHeadshotDamage", function(npc, hitgroup, d
         dmg:ScaleDamage(0.70)
     end
 end)
+
+--Controls limb damage multipliers relative to default limb damage multipliers for weapon types and NPC/Minion damage
+local HitGroups = { -- https://wiki.facepunch.com/gmod/Enums/HITGROUP
+    [0] = 1, -- Generic, aka other
+    [1] = 1, -- Head
+    [2] = 1, -- Chest
+    [3] = 1, -- Stomach
+    [4] = 1, -- Left Arm
+    [5] = 1, -- Right Arm
+    [6] = 1, -- Left Leg
+    [7] = 1, -- Right Leg
+    [10] = 1, -- Gear(?), Somewhere near belt
+}
+local MeleeHitGroups = { -- Also used for Minion damage to ignore limb multipliers
+    [0] = 1, -- Generic, aka other
+    [1] = 1, -- Head
+    [2] = 1, -- Chest
+    [3] = 1, -- Stomach
+    [4] = 4, -- Left Arm    -- 25% * 4 = 100% damage vs limb
+    [5] = 4, -- Right Arm
+    [6] = 4, -- Left Leg
+    [7] = 4, -- Right Leg
+    [10] = 1, -- Gear(?), Somewhere near belt
+}
+hook.Add("ScaleNPCDamage", "Horde_Locational_Damage", function(npc, hitgroup, dmginfo)
+    local attacker = dmginfo:GetAttacker()
+    if (!IsValid(attacker)) then return end
+    if (attacker:IsPlayer() and not attacker:GetActiveWeapon().Horde_Use_Locational_DMG) --[[or not (attacker.Horde_Use_Locational_DMG)]] then return end
+    local scale = HitGroups[hitgroup] || 1
+    if attacker:IsPlayer() and not HORDE:IsPlayerMinion(attacker) then --Player damage and not minion damage
+        if attacker:GetActiveWeapon().Horde_Use_Locational_DMG == "melee" then --Melee damage
+            scale = MeleeHitGroups[hitgroup] || 1
+        end
+    elseif HORDE:IsPlayerMinion(attacker) then --Minion damage
+        scale = MeleeHitGroups[hitgroup] || 1
+    else
+        scale = 1 --Scale nothing
+    end
+    dmginfo:ScaleDamage(scale)
+end)
+
+
+-- New dank explosion code
+--[[
+    <entity> attacker = attacker
+    <vector> origin = position for damage
+    <int> radius = radius
+    <int> falloffradius = minimum distance for damage to start decreasing
+    <int> damage = damage
+    <int> damagetype = Damage type, https://wiki.facepunch.com/gmod/Enums/DMG
+    <float> basedamagemul = base damage multiplier
+
+    <string> fallofftype = Damage falloff mode
+        instant : Only uses base damage when target's distance > min distance
+        linear : It explains itself
+        linear_inverted : It explains itself
+
+    <float> falloff_speed = Damage falloff speed
+    <int> falloff_cap = Damage falloff cap
+    <bool> ignoreattacker = Ignore the attacker
+]]
+local defaults = { -- Default variables
+    radius = 100,
+    falloffradius = 0,
+    falloff_cap = 0,
+    damage = 100,
+    basedamagemul = 0,
+    fallofftype = "linear",
+    falloff_speed = 1,
+    ignoreattacker = false,
+    origin = Vector(0, 0, 0),
+    damagetype = 64, -- DMG_BLAST
+    damagecustomtype = nil,
+    antishotgun = nil,
+}
+function HORDE.RadiusDamageExtra(data)
+    if(!data || !IsValid(data.attacker)) then return end -- check is data table and attacker is valid or not
+    for k,v in pairs(defaults) do -- apply default variables so it won't error out when you didn't enter it
+
+        --[[
+            k = key
+            v = value
+
+            e.x
+                defaults = { -- This is a table
+                    radius = 100, -- radius is key, 100 is value
+                }
+
+            if you pay attention at both data table and defaults table, they have same keys, we can use it to validate the values in the key we wanted
+        ]]
+
+        if(data[k]) then continue end -- If value is valid then skip it
+        data[k] = v -- Apply the default value to data table if it's invalid, so you don't have to enter every single key
+    end
+
+    -- local variables will be faster than table-lookup in the for loop
+    local attacker = data.attacker
+    local inflictor = data.inflictor -- || attacker
+    --if(attacker:IsPlayer() && IsValid(attacker:GetActiveWeapon())) then inflictor = attacker:GetActiveWeapon() end
+    local radius = data.radius
+    local fradius = data.falloffradius
+    local fradius_min = math.max(radius - fradius, 0)
+    if(fradius_min == 0) then -- Prevent math.huge(infinite) when dividing
+        fradius_min = 1
+    end
+    local dmg = data.damage
+    local dmgtype = data.damagetype
+    local basedmg_scale = data.basedamagemul
+    local ftype = data.fallofftype
+    local fscale = data.falloff_speed
+    local fcap = data.falloff_cap
+    local skip_attacker = data.ignoreattacker
+
+    local pos = data.origin
+    local dmgcustom = data.damagecustomtype
+    local no_shotgunning = data.antishotgun
+
+    local base_dmg = dmg * basedmg_scale
+    local scalable_dmg = dmg * math.max(1 - basedmg_scale, 0) -- Just in case if you got basedmg_scale > 1
+
+    for _, ent in pairs(ents.FindInSphere(pos, radius)) do
+        if(skip_attacker && ent == attacker) then continue end
+        if ent:IsPlayer() && ent != attacker then continue end
+        if HORDE:IsPlayerMinion(ent) == true then continue end
+        if ent.horde_splash_antishotgun then continue end
+        if no_shotgunning then
+            ent.horde_splash_antishotgun = true
+            timer.Simple(0, function()
+                --if not ent:IsValid() then return end
+                ent.horde_splash_antishotgun = nil
+            end)
+        end
+        local dst = ent:GetPos():Distance(pos)
+        if(dst > radius) then continue end -- Sometimes it returns entities with incorrect distance, filte it out
+        local sData = {
+            checkmode = 2,
+            originVector = pos,
+            targetEntity = ent,
+            advancedCheck = true,
+        }
+        if(!HORDE.IsInSight(sData)) then continue end
+        local ragdoll_force = attacker:GetRight() * math.random(-4912, 4912) + attacker:GetForward() * math.random(2048, 9989)
+        local dmginfo = DamageInfo()
+            dmginfo:SetAttacker(attacker)
+            dmginfo:SetInflictor(inflictor)
+            dmginfo:SetDamagePosition(ent:GetPos())
+            dmginfo:SetDamageType(dmgtype)
+            dmginfo:SetDamageForce(ragdoll_force)
+            if dmgcustom then
+                dmginfo:SetDamageCustom(dmgcustom)
+            end
+
+        if(dst <= fradius) then
+            if ent.donthitmeagain then
+                dmginfo:SetDamage(0)
+            else
+                dmginfo:SetDamage(dmg)
+            end
+            ent:TakeDamageInfo(dmginfo)
+        else
+            local newdst = dst - fradius
+            local scale = (newdst / fradius_min) / fscale
+            local sdmg = scalable_dmg
+            if(ftype == "instant") then
+                sdmg = 0
+            elseif(ftype == "linear") then
+                sdmg = sdmg * (1 - scale)
+            elseif(ftype == "linear_inverted") then
+                sdmg = sdmg * scale
+            end
+            if ent.donthitmeagain then
+                dmginfo:SetDamage(0)
+            else
+                dmginfo:SetDamage(math.max(base_dmg + sdmg, fcap))
+            end
+            ent:TakeDamageInfo(dmginfo)
+        end
+    end
+end

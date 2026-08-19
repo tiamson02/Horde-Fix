@@ -33,6 +33,9 @@ function HORDE:PlayerInit(ply)
         net.Broadcast()
     end
 
+    if not ply:Horde_GetClass() then
+        ply:Horde_SetClass(HORDE.classes[HORDE.Class_Survivor])
+    end
     ply:Horde_SetMaxWeight(HORDE.max_weight)
     ply:Horde_SetWeight(ply:Horde_GetMaxWeight())
     if ply:Alive() and not (HORDE.start_game and HORDE.current_break_time <= 0) then
@@ -132,9 +135,6 @@ function HORDE:PlayerInit(ply)
         HORDE:LoadSkullTokens(ply)
     end
     ply:Horde_SetDropEntities({})
-    if not ply:Horde_GetClass() then
-        ply:Horde_SetClass(HORDE.classes[HORDE.Class_Survivor])
-    end
 
     timer.Simple(0.1, function()
         ply:Horde_SetMaxArmor()
@@ -285,7 +285,12 @@ function HORDE:GiveStarterWeapons(ply)
             for _, wpn_class in pairs(weapons_gotted) do
                 local wep = ply:GetWeapon(wpn_class)
                 if IsValid(wep) then
-                    ply:SetAmmo(wep.StartAmmo or math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3), wep:GetPrimaryAmmoType())
+                    HORDE:WeaponChangeAmmoType(wep)
+                    local ammogive = wep.StartAmmo or math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3)
+                    //if wep.ArcCW then
+                    //    wep.ForceDefaultAmmo = ammogive
+                    //end
+                    ply:SetAmmo(ammogive, wep:GetPrimaryAmmoType())
                 end
             end
         end)

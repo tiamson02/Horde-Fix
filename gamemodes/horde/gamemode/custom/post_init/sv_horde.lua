@@ -116,32 +116,43 @@ function HORDE:RepositionBoss(valid_nodes)
     if not pos then return end
     HORDE.horde_boss:SetPos(pos)
 end
-
+local director_interval = 9
+if GetConVarNumber("horde_director_interval") then
+    director_interval = math.max(1, GetConVarNumber("horde_director_interval"))
+end
 function HORDE:StartBreak()
     if horde_in_break then return end
     horde_in_break = true
+    timer.Adjust("Horde_Main", director_interval, nil, nil)
     net.Start("Horde_SyncGameInfo")
-        net.WriteUInt(HORDE.current_wave, 16)
+    net.WriteUInt(HORDE.current_wave, 16)
     net.Broadcast()
-    timer.Create("Horder_Counter", 1, 0, function ()
+    timer.Create("Horder_Counter", 1, 0, function()
         if not HORDE.start_game then return end
         HORDE:BroadcastBreakCountDownMessage(HORDE.current_break_time, false)
 
-        if 0 < HORDE.current_break_time then
-            HORDE.current_break_time = HORDE.current_break_time - 1
+        if HORDE.Skip_Wave_Timer then
+            HORDE.current_break_time = 0
         end
 
-        if HORDE.current_break_time == 0 then
+        if 0 < HORDE.current_break_time then
+            HORDE.current_break_time = HORDE.current_break_time - 1
+        elseif HORDE.current_break_time == 0 then
             -- New round
+            timer.Adjust("Horde_Main", 1, nil, nil)
             HORDE.current_wave = HORDE.current_wave + 1
             net.Start("Horde_SyncGameInfo")
-                net.WriteUInt(HORDE.current_wave, 16)
+            net.WriteUInt(HORDE.current_wave, 16)
             net.Broadcast()
             HORDE:BroadcastBreakCountDownMessage(0, false)
             horde_in_break = nil
             timer.Remove("Horder_Counter")
         end
     end)
+end
+
+function HORDE:InBreak()
+    return horde_in_break
 end
 
 function HORDE:RemoveDistantEnemies(enemies)
@@ -279,26 +290,33 @@ function HORDE:OnEnemyKilled(victim, killer, weapon)
             else
                 HORDE.total_enemies_this_wave = HORDE.total_enemies_this_wave + 1
             end
+            if HORDE.total_enemies_this_wave <= 0 and HORDE.alive_enemies_this_wave <= 0 then
+                timer.Adjust("Horde_Main", 1, nil, nil)
+            end
         end
         
-        if (HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave) <= 10 then
+        --[[if (HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave) <= 10 then
             net.Start("Horde_HighlightEntities")
             net.WriteUInt(HORDE.render_highlight_enemies, 3)
             net.Broadcast()
-        end
+        end]]
         
         if not HORDE.horde_has_active_objective then
             if HORDE.endless == 1 then
                 if HORDE.horde_boss and HORDE.horde_boss:IsValid() and HORDE.horde_boss:Health() > 0 then
                     HORDE:BroadcastEnemiesCountMessage(true, tostring(HORDE.current_wave) .. " / ∞", 0)
                 else
-                    HORDE:BroadcastEnemiesCountMessage(false, tostring(HORDE.current_wave) .. " / ∞", HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave)
+                    HORDE:BroadcastEnemiesCountMessage(false, tostring(HORDE.current_wave) .. " / ∞",
+                        HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave)
                 end
             else
                 if HORDE.horde_boss and HORDE.horde_boss:IsValid() and HORDE.horde_boss:Health() > 0 then
-                    HORDE:BroadcastEnemiesCountMessage(true, tostring(HORDE.current_wave) .. " / " .. tostring(HORDE.max_waves), 0)
+                    HORDE:BroadcastEnemiesCountMessage(true,
+                        tostring(HORDE.current_wave) .. " / " .. tostring(HORDE.max_waves), 0)
                 else
-                    HORDE:BroadcastEnemiesCountMessage(false, tostring(HORDE.current_wave) .. " / " .. tostring(HORDE.max_waves), HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave)
+                    HORDE:BroadcastEnemiesCountMessage(false,
+                        tostring(HORDE.current_wave) .. " / " .. tostring(HORDE.max_waves),
+                        HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave)
                 end
             end
         end
@@ -329,7 +347,7 @@ function HORDE:OnEnemyKilled(victim, killer, weapon)
                 end
             end
 
-            if victim:GetVar("is_elite") then
+            if victim:Horde_IsElite() then
                 if not HORDE.player_elite_kills[killer:SteamID()] then HORDE.player_elite_kills[killer:SteamID()] = 0 end
                 HORDE.player_elite_kills[killer:SteamID()] = HORDE.player_elite_kills[killer:SteamID()] + 1
             end
@@ -355,6 +373,7 @@ function HORDE:OnEnemyKilled(victim, killer, weapon)
                     HORDE.horde_has_active_objective = true
                 else
                     HORDE:WaveEnd()
+                    hook.Run("HordeWaveEnd", HORDE.current_wave)
                 end
             end
 
@@ -387,7 +406,7 @@ function HORDE:HardResetDirector()
         boss_music_loop = nil
     end
     net.Start("Horde_SyncGameInfo")
-        net.WriteUInt(HORDE.current_wave, 16)
+    net.WriteUInt(HORDE.current_wave, 16)
     net.Broadcast()
 end
 
@@ -415,6 +434,8 @@ function HORDE:SpawnAmmoboxes(valid_nodes)
 end
 
 function HORDE:WaveStart()
+    timer.Adjust("Horde_Main", director_interval, nil, nil)
+    HORDE.Skip_Wave_Timer = nil
     if (HORDE.enemies_normalized == nil) or table.IsEmpty(HORDE.enemies_normalized) then
         HORDE:HardResetDirector()
         HORDE:SendNotification("Enemies list is empty. Config the enemy list or no enemies wil spawn.", 1)
@@ -518,12 +539,17 @@ function HORDE:WaveStart()
     net.Start("Horde_ForceCloseShop")
     net.Broadcast()
 
-    if not HORDE.has_buy_zone then
+    --if not HORDE.has_buy_zone then
         net.Start("Horde_SyncStatus")
         net.WriteUInt(HORDE.Status_CanBuy, 8)
         net.WriteUInt(0, 8)
         net.Broadcast()
-    end
+        
+        --network this so arccw attachments know you're in buy zone
+        net.Start("Horde_IsInBuyZone")
+            net.WriteBool(false)
+        net.Broadcast()
+    --end
 
     -- Get objectives, if there are any
     if not has_boss then
@@ -534,7 +560,8 @@ function HORDE:WaveStart()
         HORDE.horde_active_holdzones = nil
 
         local has_hold_obj = holdzones and not table.IsEmpty(holdzones)
-        local has_payload_obj = payload_spawns and not table.IsEmpty(payload_spawns) and payload_destinations and not table.IsEmpty(payload_destinations)
+        local has_payload_obj = payload_spawns and not table.IsEmpty(payload_spawns) and payload_destinations and
+            not table.IsEmpty(payload_destinations)
         if has_hold_obj and has_payload_obj then
             local p = math.random()
             if p <= 0.5 then
@@ -550,7 +577,7 @@ function HORDE:WaveStart()
             HORDE.horde_active_holdzones = holdzones
             for id, zone in pairs(holdzones) do
                 zone:Horde_SetActivated(true)
-                HORDE:StartObjective(HORDE.OBJECTIVE_HOLD, {zone=zone})
+                HORDE:StartObjective(HORDE.OBJECTIVE_HOLD, { zone = zone })
             end
             HORDE.horde_has_active_objective = true
         elseif has_payload_obj then
@@ -559,7 +586,7 @@ function HORDE:WaveStart()
 
             for id, spawn in pairs(payload_spawns) do
                 spawn.Horde_Activated = true
-                HORDE:StartObjective(HORDE.OBJECTIVE_PAYLOAD, {spawn=spawn})
+                HORDE:StartObjective(HORDE.OBJECTIVE_PAYLOAD, { spawn = spawn })
             end
 
             for id, dest in pairs(payload_destinations) do
@@ -590,9 +617,8 @@ function HORDE:WaveEnd()
     horde_boss_spawned = false
     horde_boss_properties = nil
     horde_boss_reposition = false
-    horde_boss_critical = false
-
-    HORDE:StartBreak()
+    horde_boss_critical = false 
+    HORDE.player_ready = {}
     local enemies = HORDE:ScanEnemies()
     if not table.IsEmpty(enemies) then
         for _, enemy in pairs(enemies) do
@@ -615,16 +641,9 @@ function HORDE:WaveEnd()
         end)
         boss_music_loop:Play()
     else
+        HORDE:StartBreak()
         HORDE:BroadcastBreakCountDownMessage(0, true)
         HORDE:SendNotification("Wave Completed!", 0)
-
-        -- Send Tips
-        local tip = HORDE:GetTip()
-        if tip then
-            net.Start("Horde_SyncTip")
-                net.WriteString(HORDE:GetTip())
-            net.Broadcast()
-        end
     end
 
     net.Start("Horde_HighlightEntities")
@@ -635,6 +654,31 @@ function HORDE:WaveEnd()
         if not ply:Alive() then ply:Spawn() end
         HORDE.player_class_changed[ply:SteamID()] = false
         HORDE.player_ready[ply] = 0
+        
+        net.Start("Horde_PlayerReadySync")
+            net.WriteTable(HORDE.player_ready)
+        net.Broadcast()
+        
+        if (HORDE.current_wave < HORDE.max_waves and (HORDE.endless == 0)) or (HORDE.endless == 1) then
+            -- Show Leaderboards
+            net.Start("Horde_ShowLeaderboardsTemporarily")
+            net.Send(ply)
+
+            -- Send Tips
+            local tip = HORDE:GetTip()
+            if tip then
+                net.Start("Horde_SyncTip")
+                    net.WriteString(HORDE:GetTip())
+                net.Send(ply)
+                local id = ply:SteamID()
+                timer.Create("Horde_TipsTimer" .. id, 10, 0, function()
+                    if not HORDE:InBreak() or HORDE.current_break_time <= 10 then timer.Remove("Horde_TipsTimer" .. id) return end
+                    net.Start("Horde_SyncTip")
+                        net.WriteString(HORDE:GetTip())
+                    net.Send(ply)
+                end)
+            end
+        end
     end
 
     if GetConVarNumber("horde_npc_cleanup") == 1 then
@@ -655,12 +699,6 @@ function HORDE:WaveEnd()
         timer.Simple(1, function()
             HORDE:SendNotification("Tier " .. horde_perk_progress .. " perks have been unlocked!", 0)
             horde_perk_progress = horde_perk_progress + 1
-            if horde_perk_progress <= 4 and HORDE:Horde_GetWaveForPerk(horde_perk_progress) and HORDE.current_wave >= HORDE:Horde_GetWaveForPerk(horde_perk_progress) then
-            
-                HORDE:SendNotification("Tier " .. horde_perk_progress .. " perks have been unlocked!", 0)
-                horde_perk_progress = horde_perk_progress + 1
-
-            end
         end)
     end
     for _, ply in pairs(player.GetAll()) do
@@ -689,6 +727,11 @@ function HORDE:WaveEnd()
         net.Start("Horde_SyncStatus")
         net.WriteUInt(HORDE.Status_CanBuy, 8)
         net.WriteUInt(1, 8)
+        net.Broadcast()
+        
+        --network this so arccw attachments know you're in buy zone
+        net.Start("Horde_IsInBuyZone")
+            net.WriteBool(true)
         net.Broadcast()
     end
 
@@ -1096,8 +1139,27 @@ function HORDE:Direct()
         end
     end
 
+    if (HORDE.total_enemies_this_wave_fixed - HORDE.killed_enemies_this_wave) <= 10 then
+        local remaining = {}
+        for _, enemy in ipairs(enemies) do
+            remaining[enemy] = enemy:GetPos()
+        end
+        
+        net.Start("Horde_MarkRemainingEnemies")
+            net.WriteTable(remaining)
+        net.Broadcast()
+    end
+
     if HORDE.total_enemies_this_wave <= 0 and HORDE.alive_enemies_this_wave <= 0 then
         HORDE:WaveEnd()
         hook.Run("HordeWaveEnd", HORDE.current_wave)
     end
 end
+
+timer.Create("Horde_Main", director_interval, 0, function()
+    local status, err = pcall(function() HORDE:Direct() end)
+
+    if not status then
+        print(err)
+    end
+end)

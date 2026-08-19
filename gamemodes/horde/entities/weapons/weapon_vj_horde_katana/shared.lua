@@ -1,4 +1,7 @@
 if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
+if CLIENT then
+    killicon.AddAlias("weapon_vj_horde_katana", "arccw_horde_katana")
+end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 SWEP.Base = "weapon_vj_base"
 SWEP.PrintName = "Katana"
@@ -29,6 +32,7 @@ SWEP.MeleeWeaponSound_Hit = {"horde/weapons/katana/melee_katana_01.ogg",
 "horde/weapons/katana/melee_katana_03.ogg"} -- Sound it plays when it hits something
 SWEP.MeleeWeaponSound_Miss = {"weapons/iceaxe/iceaxe_swing1.wav"} -- Sound it plays when it misses (Doesn't hit anything)
 SWEP.MeleeAttackDamageAngleRadius = 75
+SWEP.HoldType = "melee"
 
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
     local meleeHitEnt = false
@@ -47,7 +51,6 @@ function SWEP:CustomOnPrimaryAttack_BeforeShoot()
                     v:Horde_AddDebuffBuildup(HORDE.Status_Bleeding, 30, owner)
                 end
 				VJ_DestroyCombineTurret(owner, v)
-				self:CustomOnPrimaryAttack_MeleeHit(v)
 				meleeHitEnt = true
 			end
 		end
@@ -57,7 +60,6 @@ function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 				self:EmitSound(meleeSd, 100, math.random(90, 100))
 			end
 		else
-			if owner.IsVJBaseSNPC == true then owner:CustomOnMeleeAttack_Miss() end
 			local meleeSd = VJ_PICK(self.MeleeWeaponSound_Miss)
 			if meleeSd != false then
 				self:EmitSound(meleeSd, 100, math.random(90, 100))

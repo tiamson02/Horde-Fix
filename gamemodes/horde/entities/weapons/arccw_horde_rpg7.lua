@@ -8,7 +8,7 @@ if (CLIENT) then
 end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
-SWEP.Category = "ArcCW - Horde" -- edit this if you like
+SWEP.Category = "Horde - Explosive" -- edit this if you like
 SWEP.AdminOnly = false
 
 SWEP.PrintName = "RPG7"
@@ -27,8 +27,8 @@ SWEP.Spawnable = true
 
 SWEP.UseHands = true
 
-SWEP.ViewModel = "models/vj_weapons/c_rpg7.mdl"
-SWEP.WorldModel = "models/vj_weapons/w_ins_rpg7.mdl"
+SWEP.ViewModel = "models/vj_base/weapons/c_rpg7.mdl"
+SWEP.WorldModel = "models/vj_base/weapons/w_rpg7.mdl"
 SWEP.WorldModelOffset = {
     pos = Vector(0, 0, -7),
     ang = Angle(0, 0, 0),
@@ -79,9 +79,9 @@ SWEP.Primary.Ammo = "RPG_Round" -- what ammo type the gun uses
 SWEP.ShootVol = 100 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 
-SWEP.ShootSound = "vj_weapons/rpg/rpg_fire.wav"
-SWEP.ShootSoundSilenced = "vj_weapons/rpg/rpg_fire_far.wav"
-SWEP.DistantShootSound = "vj_weapons/rpg/rpg_fire_far.wav"
+SWEP.ShootSound = "vj_base/weapons/rpg/single.wav"
+-- SWEP.ShootSoundSilenced = "vj_weapons/rpg/rpg_fire_far.wav"
+-- SWEP.DistantShootSound = "vj_weapons/rpg/rpg_fire_far.wav"
 
 --SWEP.MuzzleEffect = "muzzleflash_pistol"
 --SWEP.ShellModel = "models/shells/shell_9mm.mdl"
@@ -102,7 +102,7 @@ SWEP.ProceduralIronFire = false
 SWEP.CaseBones = {}
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-3, 0, 2),
+    Pos = Vector(-2.75, 0, -0.2),
     Ang = Angle(-0, 0, 0),
     Magnification = 1.3,
 }
@@ -153,7 +153,7 @@ SWEP.Animations = {
         Time = 0.1,
         SoundTable = {
             {
-            s = "weapons/arccw/draw_secondary.wav",
+            s = "arccw_go/ak47/ak47_draw.wav",
             t = 0
             }
         },

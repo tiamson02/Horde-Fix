@@ -8,7 +8,7 @@ if (CLIENT) then
 end
 SWEP.Base = "arccw_horde_gl_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
-SWEP.Category = "ArcCW - Horde" -- edit this if you like
+SWEP.Category = "Horde - Explosive" -- edit this if you like
 SWEP.AdminOnly = false
 
 SWEP.PrintName = "Heat Blaster"
@@ -27,8 +27,8 @@ SWEP.Spawnable = true
 
 SWEP.UseHands = true
 
-SWEP.ViewModel = "models/vj_weapons/c_e5.mdl"
-SWEP.WorldModel = "models/vj_weapons/w_e5.mdl"
+SWEP.ViewModel = "models/vj_base/weapons/c_e5.mdl"
+SWEP.WorldModel = "models/vj_base/weapons/w_e5.mdl"
 SWEP.ViewModelFOV = 60
 
 SWEP.Damage = 500
@@ -50,10 +50,11 @@ SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 20
 SWEP.ReducedClipSize = 20
 
-SWEP.Recoil = 5
-SWEP.RecoilSide = 1
-SWEP.VisualRecoilMult = 1
-SWEP.RecoilRise = 1
+SWEP.Recoil = 1
+SWEP.RecoilSide = 0
+SWEP.VisualRecoilMult = 0
+SWEP.RecoilRise = 0
+SWEP.RecoilPunch = 0
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -69,8 +70,8 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 150 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 250
+SWEP.HipDispersion = 10 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 10
 
 SWEP.Primary.Ammo = "SMG1_Grenade" -- what ammo type the gun uses
 

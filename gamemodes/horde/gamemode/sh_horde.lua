@@ -20,7 +20,7 @@ CreateConVar("horde_external_lua_config", "", FCVAR_SERVER_CAN_EXECUTE, "Name of
 --CreateConVar("horde_starter_weapon_1", "", FCVAR_ARCHIVE, "Starter weapon 1.")
 --CreateConVar("horde_starter_weapon_2", "", FCVAR_ARCHIVE, "Starter weapon 2.")
 
-CreateConVar("horde_director_interval", 5, FCVAR_SERVER_CAN_EXECUTE, "Game director execution interval in seconds. Decreasing this increases spawn rate.")
+CreateConVar("horde_director_interval", 9, FCVAR_SERVER_CAN_EXECUTE, "Game director execution interval in seconds. Decreasing this increases spawn rate.")
 CreateConVar("horde_max_enemies_alive_base", 20, FCVAR_SERVER_CAN_EXECUTE, "Maximum number of living enemies (base).")
 CreateConVar("horde_max_enemies_alive_scale_factor", 5, FCVAR_SERVER_CAN_EXECUTE, "Scale factor of the maximum number of living enemies for multiplayer.")
 CreateConVar("horde_max_enemies_alive_max", 50, FCVAR_SERVER_CAN_EXECUTE, "Maximum number of maximum living enemies.")
@@ -54,7 +54,10 @@ CreateConVar("horde_enable_health_gui", 1, FCVAR_ARCHIVE, "Enables health UI.")
 CreateConVar("horde_enable_ammo_gui", 1, FCVAR_ARCHIVE, "Enables ammo UI.")
 
 CreateConVar("horde_enable_class_models", 1, FCVAR_ARCHIVE, "Enables ammo UI.")
+CreateConVar("horde_testing_attachment_copy", 0, FCVAR_SERVER_CAN_EXECUTE + FCVAR_REPLICATED, "Make everything available in attachment menu and right click to copy attachment class")
+CreateConVar("horde_testing_render_hitboxes", 0, FCVAR_SERVER_CAN_EXECUTE, "Renders hitboxes for enemies. For testing purposes only.")
 CreateClientConVar("horde_disable_default_gadget_use_key", 0, FCVAR_ARCHIVE, "Disable default key bind for active gadgets.")
+CreateClientConVar("horde_disable_default_quick_grenade_key", 0, FCVAR_ARCHIVE, "Disable default key bind for quick grenade.")
 
 if SERVER then
 util.AddNetworkString("Horde_SideNotification")
@@ -74,7 +77,7 @@ end
 
 HORDE = {}
 HORDE.__index = HORDE
-HORDE.version = "1.1.2.1"
+HORDE.version = "2.1.1"
 print("[HORDE] HORDE Version is " .. HORDE.version) -- Sanity check
 
 HORDE.color_crimson = Color(220, 20, 60, 225)
@@ -171,15 +174,33 @@ if ArcCWInstalled then
         ArcCW.AttachmentBlacklistTable["go_perk_refund"] = true
         ArcCW.AttachmentBlacklistTable["go_perk_slow"] = true
         ArcCW.AttachmentBlacklistTable["go_m249_mag_12g_45"] = true
+        --Disable default attachments that have no benefit--
+        ArcCW.AttachmentBlacklistTable["go_ammo_tr"] = true
+        ArcCW.AttachmentBlacklistTable["go_ammo_blanks"] = true
+        --[[
+        --Disable default shotgun ammo to use modified Horde version--
+        ArcCW.AttachmentBlacklistTable["go_ammo_sg_triple"] = true
+        ArcCW.AttachmentBlacklistTable["go_ammo_sg_sabot"] = true
+        ArcCW.AttachmentBlacklistTable["go_ammo_sg_slug"] = true
+        ArcCW.AttachmentBlacklistTable["go_ammo_sg_scatter"] = true
+        ArcCW.AttachmentBlacklistTable["go_ammo_sg_magnum"] = true
+        --Disable default shotgun mods to use modified Horde version--
+        ArcCW.AttachmentBlacklistTable["go_m1014_mag_4"] = true
+        ArcCW.AttachmentBlacklistTable["go_m1014_mag_8"] = true
+        ArcCW.AttachmentBlacklistTable["go_mag7_mag_3"] = true
+        ArcCW.AttachmentBlacklistTable["go_nova_mag_8"] = true
+        ArcCW.AttachmentBlacklistTable["go_870_mag_4"] = true
+        ArcCW.AttachmentBlacklistTable["go_870_mag_8"] = true
+        ]]
     end
 end
 
 
 -- Disable Godmode
 RunConsoleCommand("sbox_godmode", "0")
-RunConsoleCommand("vj_npc_addfrags", "0")
-RunConsoleCommand("vj_npc_knowenemylocation", "1")
-RunConsoleCommand("vj_npc_bleedenemyonmelee", "0")
+RunConsoleCommand("vj_npc_ply_frag", "0")
+RunConsoleCommand("vj_npc_sight_xray", "1")
+RunConsoleCommand("vj_npc_melee_bleed", "0")
 
 -- Util functions
 function HORDE:GiveAmmo(ply, wpn, count)
@@ -304,4 +325,284 @@ function HORDE.Queue:Create()
         return (last-first+1)
     end
     return t
-  end
+end
+
+--Custom Line of sight check
+local function checkInSight(trace, targetent, advanced)
+    if(!advanced) then
+        trace.endpos = trace.endpos + targetent:OBBCenter()
+        return util.TraceLine(trace).Fraction == 1
+    else
+        if(util.TraceLine(trace).Fraction == 1) then return true end
+        trace.endpos = trace.endpos + targetent:OBBCenter()
+        if(util.TraceLine(trace).Fraction == 1) then return true end
+        trace.endpos = targetent:GetPos() + Vector(0, 0, targetent:OBBMaxs().z)
+        if(util.TraceLine(trace).Fraction == 1) then return true end
+        return false
+    end
+end
+
+--[[
+    checkmode :
+        1 = Use Entity position for origin
+        2 = Use Vector Given for origin
+
+    originEntity = Entity that will be used for origin, only available when checkmode is 1
+    originEntityCenter = Use origin entity's center position for origin
+    originVector = Vector that will be used for origin, only available when checkmode is 2
+    targetEntity = Entity to check
+
+    advancedCheck = Use three points (Bottom, Center, Top) to check visibility, Will be 3x costy
+    maxAngle = Maximum angle offset to target, leave empty to skip this check, only available when checkmode is 1
+]]
+function HORDE.IsInSight(data)
+    local mode = data.checkmode || 1
+    if(mode == 1) then
+        local origin = data.originEntity:GetPos()
+        if(data.originEntityCenter) then
+            origin = origin + originEntity:OBBCenter()
+        end
+        local pos = data.targetEntity:GetPos()
+        if(data.maxAngle) then
+            local y1 = data.originEntity:GetAngles().y
+            local y2 = (pos - origin):Angle().y
+            if(math.NormalizeAngle(y1 - y2) > data.maxAngle) then
+                return false
+            end
+        end
+        local tr = {
+            start = origin,
+            endpos = pos,
+            mask = MASK_SOLID_BRUSHONLY,
+        }
+        return checkInSight(tr, data.targetEntity, data.advancedCheck)
+    else
+        local pos = data.targetEntity:GetPos()
+        local tr = {
+            start = data.originVector,
+            endpos = pos,
+            mask = MASK_SOLID_BRUSHONLY,
+        }
+        return checkInSight(tr, data.targetEntity, data.advancedCheck)
+    end
+end
+
+-- This is a SHARED file, you need to separate the codes for server and client
+if(SERVER) then -- Codes for serverside
+    util.AddNetworkString("Horde_ScreenEffect")
+    
+    function HORDE.SendBorderEffect(ply, data)
+        net.Start("Horde_ScreenEffect")
+        net.WriteTable(data)
+        net.Send(ply)
+    end
+    --[[
+	function HORDE.SetOldWeapons(player)
+        player.OldWeapons = {}
+        for k,v in ipairs(player:GetWeapons()) do
+            table.insert(player.OldWeapons, v:GetClass())
+        end
+    end
+
+    function HORDE.RestoreWeapons(player)
+        if(!player.OldWeapons) then return end
+        for k,v in ipairs(player.OldWeapons) do
+            player:Give(v)
+        end
+        player.OldWeapons = {}
+    end
+	]]
+else -- Codes for clientside
+--Custom Border Screen effects
+    HORDE.BorderDefaultMaterial = Material("materials/hud_effects/Rectangle_Effect_01.png")
+    net.Receive("Horde_ScreenEffect", function()
+        local data = net.ReadTable()
+        HORDE:SetBorderEffects(data)
+    end)
+
+    HORDE.BorderEffects = {}
+    
+    function HORDE:RemoveAllScreenEffects()
+        HORDE.BorderEffects = {}
+    end
+    
+    function HORDE.GetFixedValue(inputNum)
+        local target = 0.016666
+        return inputNum / (target / RealFrameTime())
+    end
+
+    --[[
+        id = ID for the border effects, it's REQUIRED
+        material = Texture for the effect, leave empty for default fade texture
+        color = Color for the effect, default white
+        alpha = it explains itself
+        time = Length of effect, default 1 seconds
+        wait_til_end = Delay the fadeout until the draw time ends
+        fadeoutspeed = Speed when fadingout, only works when wait_til_end is true
+    ]]
+    local default = {
+        material = HORDE.BorderDefaultMaterial,
+        color = Color(255, 255, 255, 255),
+        alpha = 255,
+        time = 1,
+        wait_til_end = false,
+        fadeoutspeed = 10,
+    }
+    function HORDE:SetBorderEffects(data)
+        if(!data || !data.id) then return end
+        local id = data.id
+        local effect = {}
+            effect.calpha = 255
+        if(data.material) then
+            data.material = Material(data.material)
+        end
+        if(!HORDE.BorderEffects[id]) then
+            for index,val in pairs(default) do
+                if(data[index]) then
+                    effect[index] = data[index]
+                else
+                    effect[index] = val
+                end
+                if(index == "time") then
+                    effect.endtime = CurTime() + effect[index]
+                end
+            end
+            HORDE.BorderEffects[id] = effect
+        else
+            for index,val in pairs(data) do
+                HORDE.BorderEffects[id][index] = val
+                if(index == "time") then
+                    HORDE.BorderEffects[id].endtime = CurTime() + val
+                end
+            end
+        end
+    end
+
+    hook.Add("HUDPaintBackground", "HORDE_BorderEffect", function()
+        if (!LocalPlayer():Alive()) then
+            HORDE.BorderEffects = {}
+        end
+        for k,v in next, HORDE.BorderEffects do
+            if(v.endtime <= CurTime()) then
+                if(!v.wait_til_end) then
+                    HORDE.BorderEffects[k] = nil
+                    continue
+                else
+                    v.calpha = math.Clamp(v.calpha - HORDE.GetFixedValue(v.fadeoutspeed), 0, 255)
+                    if(v.calpha <= 0) then
+                        HORDE.BorderEffects[k] = nil
+                        continue
+                    end
+                end
+            end
+            if(!v.wait_til_end) then
+                v.calpha = v.alpha * math.Clamp((v.endtime - CurTime()) / v.time, 0, 1)
+            end
+            surface.SetDrawColor(v.color.r, v.color.g, v.color.b, v.calpha)
+            surface.SetMaterial(v.material)
+            surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+        end
+    end)
+    
+    ---------Experimental Circle Paint----------------
+    local clr = Color(0, 0, 0, 0)
+    function HORDE.MaskedSphereRing(pos, radius, steps, thickness, color)
+        cam.IgnoreZ(false)
+        render.SetStencilEnable(true)
+        render.SetStencilCompareFunction(STENCIL_ALWAYS)
+        render.SetStencilPassOperation(STENCIL_KEEP)
+        render.SetStencilFailOperation(STENCIL_KEEP)
+        render.SetStencilZFailOperation(STENCIL_KEEP)
+        render.SetStencilReferenceValue(1)
+        render.SetStencilTestMask(255)
+        render.SetStencilWriteMask(255)
+        render.ClearStencil()
+        render.SetColorMaterial()
+
+        local r1, r2 = radius, radius + thickness
+
+        render.SetStencilCompareFunction(STENCIL_ALWAYS)
+        render.SetStencilZFailOperation(STENCIL_INCRSAT)
+        render.DrawSphere(pos, -r2, steps, steps, clr)
+        render.SetStencilZFailOperation(STENCIL_DECR)
+        render.DrawSphere(pos, r2, steps, steps, clr)
+        render.SetStencilZFailOperation(STENCIL_INCR)
+        render.DrawSphere(pos, -r1, steps, steps, clr)
+        render.SetStencilZFailOperation(STENCIL_DECR)
+        render.DrawSphere(pos, r1, steps, steps, clr)
+
+        local dir = LocalPlayer():EyeAngles():Forward()
+
+        render.SetStencilCompareFunction( STENCIL_EQUAL )
+        render.SetStencilReferenceValue( 1 )
+        render.DrawQuadEasy(EyePos() + dir * 10, -dir, 200, 200, color, 0)
+
+        render.SetStencilEnable(false)
+    end
+    --[[
+    net.Receive("Horde_GetPerkLevelBonus", function()
+        local ply = net.ReadEntity()
+        local perk = net.ReadString()
+        local bonus = net.ReadFloat()
+        if not ply:IsValid() then return end
+        ply:Horde_SetPerkLevelBonus(perk, bonus)
+    end)
+    ]]
+    
+    --network this so arccw attachments know you're in trader zone
+    net.Receive("Horde_IsInBuyZone", function()
+        local int = net.ReadBool()
+        local ply = LocalPlayer()
+        if not ply:IsValid() then return end
+        ply.Horde_CanBuy = int
+    end)
+    
+    --network this so arccw attachments know you're in trader time
+    net.Receive("Horde_IsInBreakTime", function()
+        local int = net.ReadBool()
+        local ply = LocalPlayer()
+        if not ply:IsValid() then return end
+        ply.Horde_IsInBreakTime = int
+    end)
+    
+    ---------- highlighted text test ---------------------------------------------------------
+    --[[
+    local label = vgui.Create("RichText", ui)
+    label:SetPos(imggap, title:GetY() + title:GetTall() + imggap)
+    label:SetSize(maxwide, ui:GetTall())
+    label:SetFontInternal("ZScenario-UISmall2x")
+    label:InsertColorChange(255, 255, 255, 255)
+    local clr = color_white
+    local expected_tag, expected_endtag, expecting_endtag = "<clr>", "<clr>", false
+    local skipTo = -1
+    local tmp = ""
+    for i = 1, #str do
+        local f = string.sub(str, i, i + 4)
+        if(!expecting_endtag) then
+            if(f == expected_tag) then
+                expecting_endtag = true
+                local r, g, b = 255, 255, 255
+                local hex = string.sub(str, i + 6, i + 11)
+                label:InsertColorChange(tonumber(string.sub(hex, 1, 2), 16), tonumber(string.sub(hex, 3, 4), 16), tonumber(string.sub(hex, 5, 6), 16), 255)
+                skipTo = i + 12
+            end
+        else
+            if(f == expected_tag) then
+                expecting_endtag = false
+                label:InsertColorChange(255, 255, 255, 255)
+                skipTo = i + 4
+            end
+        end
+        if(i > skipTo) then
+            label:AppendText(str[i])
+        end
+    end
+    ]]
+    ------------------------------------------------------------------------
+    
+    hook.Add("PreDrawOpaqueRenderables", "Horde_Circle_Preview_Range", function(depth, skybox, skybox3d)
+        hook.Run("PreDraw_ImmersionBreakingCircles")
+    end)
+    
+    
+end

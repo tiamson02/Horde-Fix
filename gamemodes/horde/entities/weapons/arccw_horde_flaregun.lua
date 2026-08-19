@@ -4,10 +4,11 @@ if (CLIENT) then
     SWEP.DrawWeaponInfoBox	= false
     SWEP.BounceWeaponIcon = false
 	killicon.Add("arccw_horde_flaregun", "vgui/hud/arccw_horde_flaregun", color_white)
+    killicon.Add("projectile_horde_flaregun_flare", "vgui/hud/arccw_horde_flaregun", color_white)
 end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
-SWEP.Category = "ArcCW - Horde" -- edit this if you like
+SWEP.Category = "Horde - Pistols" -- edit this if you like
 SWEP.AdminOnly = false
 
 SWEP.PrintName = "Flare Gun"
@@ -26,8 +27,8 @@ SWEP.Spawnable = true
 
 SWEP.UseHands = true
 
-SWEP.ViewModel = "models/vj_weapons/v_flaregun.mdl"
-SWEP.WorldModel = "models/vj_weapons/w_flaregun.mdl"
+SWEP.ViewModel = "models/vj_base/weapons/v_flaregun.mdl"
+SWEP.WorldModel = "models/vj_base/weapons/w_flaregun.mdl"
 SWEP.ViewModelFOV = 60
 
 SWEP.Damage = 0
@@ -49,10 +50,11 @@ SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 1
 SWEP.ReducedClipSize = 1
 
-SWEP.Recoil = 5
-SWEP.RecoilSide = 1
-SWEP.VisualRecoilMult = 1
-SWEP.RecoilRise = 1
+SWEP.Recoil = 1
+SWEP.RecoilSide = 0
+SWEP.VisualRecoilMult = 0
+SWEP.RecoilRise = 0
+SWEP.RecoilPunch = 0
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -66,17 +68,17 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 150 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 250
+SWEP.HipDispersion = 10 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 10
 
 SWEP.Primary.Ammo = "357" -- what ammo type the gun uses
 
 SWEP.ShootVol = 100 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 
-SWEP.ShootSound = "vj_weapons/flare/fire.wav"
-SWEP.ShootSoundSilenced = "vj_weapons/flare/fire_dist.wav"
-SWEP.DistantShootSound = "vj_weapons/flare/fire_dist.wav"
+SWEP.ShootSound = "VJ.Weapon_FlareGun.Single"
+SWEP.ShootSoundSilenced = "VJ.Weapon_FlareGun.Single"
+SWEP.DistantShootSound = "VJ.Weapon_FlareGun.Single"
 
 SWEP.MuzzleEffect = "muzzleflash_pistol"
 SWEP.ShellModel = "models/shells/shell_9mm.mdl"
