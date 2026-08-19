@@ -45,7 +45,7 @@
 			"name"		"horde_external_lua_config"
 			"text"		"Name of external lua config to use. Leave it empty if you do not have one."
 			"type"		"Text"
-			"default"	""
+			"default"	"horde_ext"
 			"singleplayer" ""
 		}
 		6
