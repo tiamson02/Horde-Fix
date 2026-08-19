@@ -33,7 +33,9 @@ end
 
 function PANEL:SetData(class, description_panel)
     self.class = class
-    self.subclass = HORDE.subclasses[MySelf:Horde_GetSubclass(self.class.name)]
+    local subclass_name = MySelf:Horde_GetSubclass(class.name)
+    self.subclass = HORDE.subclasses[subclass_name] or HORDE.subclasses[class.name] or HORDE.subclasses[HORDE.Class_Survivor]
+    if not self.subclass then return end
     self.name = class.name
     self.description = class.description
     self.description_panel = description_panel
@@ -72,7 +74,7 @@ end
 
 local star = Material("star.png", "mips smooth")
 function PANEL:Paint()
-    if self.class ~= nil then
+    if self.class ~= nil and self.subclass ~= nil then
         surface.SetDrawColor(self.bg_color)
         surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
         surface.SetFont("Item")

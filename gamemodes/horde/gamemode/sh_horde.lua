@@ -80,6 +80,104 @@ HORDE.__index = HORDE
 HORDE.version = "2.1.1"
 print("[HORDE] HORDE Version is " .. HORDE.version) -- Sanity check
 
+-- Sound registration helpers used by TFA/ArcCW weapon definitions at file scope.
+-- Defined here (early, always loaded on both server & client) so they are always
+-- available before any weapon SWEP file is loaded lazily on spawn.
+local SoundChannels = {
+	["shoot"] = CHAN_WEAPON,
+	["shootwrap"] = CHAN_STATIC,
+	["misc"] = CHAN_AUTO
+}
+
+local SoundChars = {
+	["*"] = "STREAM",
+	["#"] = "DRYMIX",
+	["@"] = "OMNI",
+	[">"] = "DOPPLER",
+	["<"] = "DIRECTIONAL",
+	["^"] = "DISTVARIANT",
+	["("] = "SPATIALSTEREO_LOOP",
+	[")"] = "SPATIALSTEREO",
+	["}"] = "FASTPITCH",
+	["$"] = "CRITICAL",
+	["!"] = "SENTENCE",
+	["?"] = "USERVOX"
+}
+local DefaultSoundChar = ")"
+
+function HORDE:Sound_PatchSound( path, kind )
+	local pathv
+	local c = string.sub(path,1,1)
+
+	if SoundChars[c] then
+		pathv = string.sub( path, 2, string.len(path) )
+	else
+		pathv = path
+	end
+
+	local kindstr = kind
+	if not kindstr then
+		kindstr = DefaultSoundChar
+	end
+	if string.len(kindstr) > 1 then
+		local found = false
+		for k,v in pairs( SoundChars ) do
+			if v == kind then
+				kindstr = k
+				found = true
+				break
+			end
+		end
+		if not found then
+			kindstr = DefaultSoundChar
+		end
+	end
+
+	return kindstr .. pathv
+end
+
+function HORDE:Sound_AddSound( name, channel, volume, level, pitch, wave, char )
+	char = char or ""
+
+	local SoundData = {
+		name = name,
+		channel = channel or CHAN_AUTO,
+		volume = volume or 1,
+		level = level or 75,
+		pitch = pitch or 100
+	}
+
+	if char ~= "" then
+		if type(wave) == "string" then
+			wave = HORDE:Sound_PatchSound(wave, char)
+		elseif type(wave) == "table" then
+			local patchWave = table.Copy(wave)
+
+			for k, v in pairs(patchWave) do
+				patchWave[k] = HORDE:Sound_PatchSound(v, char)
+			end
+
+			wave = patchWave
+		end
+	end
+
+	SoundData.sound = wave
+
+	sound.Add(SoundData)
+end
+
+function HORDE:Sound_AddFireSound( id, path, wrap, kindv )
+	kindv = kindv or ")"
+
+	HORDE:Sound_AddSound(id, wrap and SoundChannels.shootwrap or SoundChannels.shoot, 1, 120, {97, 103}, path, kindv)
+end
+
+function HORDE:Sound_AddWeaponSound( id, path, kindv )
+	kindv = kindv or ")"
+
+	HORDE:Sound_AddSound(id, SoundChannels.misc, 1, 80, {97, 103}, path, kindv)
+end
+
 HORDE.color_crimson = Color(220, 20, 60, 225)
 HORDE.color_crimson_dim = Color(200, 0, 40)
 HORDE.color_crimson_dark = Color(100,0,0)

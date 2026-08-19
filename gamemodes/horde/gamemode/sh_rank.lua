@@ -24,7 +24,7 @@ HORDE.Rank_Colors = {
 }
 
 function HORDE:ScrubSteamID(ply)
-	return ply:SteamID():gsub(":", "_")
+	return string.lower(ply:SteamID():gsub(":", "_"))
 end
 
 local plymeta = FindMetaTable("Player")
